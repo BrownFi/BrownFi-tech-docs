@@ -1,4 +1,4 @@
-# Mission  
+# Introduction on BrownFi AMM
 *Renovate AMM with high capital efficiency, simple UX, better gains for average users*.  
 Imagine 200X capital efficiency with simple-UniV2-like LP
 
@@ -38,4 +38,5 @@ The core function of BrownFi is based on an invention of a NOVEL **pricing mecha
 - Finally, we compute amountIN $dy=dx*\bar{P}$ based on the amountOUT and the computed average trading price, then execute swaption.
 
 Read more about the math [research papers](https://ieeexplore.ieee.org/abstract/document/10456889) on IEEE Access.
+Find tech specs of BrownFi and user guide here: https://github.com/BrownFi/BrownFi-technical-documents/blob/main/tech-specs.md
 
