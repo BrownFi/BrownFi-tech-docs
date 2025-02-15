@@ -1,4 +1,4 @@
-# Introduction on BrownFi AMM
+# Introduction to BrownFi AMM
 *Renovate AMM with high capital efficiency, simple UX, better gains for average users*.  
 Imagine 200X capital efficiency with simple-UniV2-like LP
 
