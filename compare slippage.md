@@ -7,9 +7,9 @@
 
 For simplicity without loss of generality, we take price lower bound $p_a = 1.0001^{-n}$, price upper bound $p_b = 1.0001^n$, symmetrically. For $n=100, p_a= 1.0001^{-100} \approx 0.99$ and $p_b=1.0001^{100} \approx 1.01$, resulting +/-1% range. For $n=200, p_a= 1.0001^{-200} \approx 0.98$ and $p_b = 1.0001^{200} \approx 1.02$, resulting +/-2% range. Let consider 4 ranges of the same token reserve.     
 
-- Uniswap V3 pool1 reserve (10,10), range [-9.5%, +10.5%] (i.e. $n=1000$), liquidity $(x+\frac{1005.06}{1.0001^{500}})(y+\frac{1005.06}{1.0001^{500}})\approx 205.05^2$, liquidity leverage (so capital efficiency) ~ X2.05
-- Uniswap V3 pool2 reserve (10,10), range +/-2%, liquidity $(x+\frac{1005.06}{1.0001^{100}})(y+\frac{1005.06}{1.0001^{100}})\approx 1005.06^2$, capital efficiency ~ X100.5
-- Uniswap V3 pool3 reserve (10,10), range +/-1%, liquidity $(x+\frac{2005.1}{1.0001^{50}})(y+\frac{2005.1}{1.0001^{50}})\approx 2005.1^2$, capital efficiency ~ X200.5
+- Uniswap V3 pool1 reserve (10,10), range [-9.5%, +10.5%] (i.e. $n=1000$), liquidity $(x+\frac{205}{1.0001^{500}})(y+\frac{205}{1.0001^{500}})\approx 205^2$, liquidity leverage (so capital efficiency) ~ X2.05
+- Uniswap V3 pool2 reserve (10,10), range +/-2%, liquidity $(x+\frac{1000}{1.0001^{100}})(y+\frac{1000}{1.0001^{100}})\approx 1000^2$, capital efficiency ~ X100
+- Uniswap V3 pool3 reserve (10,10), range +/-1%, liquidity $(x+\frac{2000}{1.0001^{50}})(y+\frac{2000}{1.0001^{50}})\approx 2000^2$, capital efficiency ~ X200
 
 A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchange. The CLMM  formula gives $(x+\frac{L}{\sqrt{p_B}}-\Delta x)(y+L\sqrt{p_a+\Delta y})=L^2$. Because $x=y$ and $\frac{1}{\sqrt{p_B}}=\sqrt{p_a}$, we have $\Delta y=\frac{L}{x+\frac{L}{\sqrt{p_B}}-\Delta x}-x-\frac{L}{\sqrt{p_B}}$.  
 
@@ -27,9 +27,9 @@ The average trading price is the only thing a trader cares, defined by $\frac{\D
 | Slippage curves               | BrownFi $K_1=1$   | BrownFi $K_2=0.1$ | BrownFi $K_3=0.01$  | BrownFi $K_4=0.001$ |
 | :----------------             | ------:         | ----:            | ----:             |----:     |
 | Uniswap V2                    |                 |                  |                   |  |
-| Uniswap V3 ($\pm10$%)         |                 |                  |$I_2$(9.02,0.046)  | $I_5$(9.9, 0.0505)  |
-| Uniswap V3 ($\pm2$%)          |                 |                  | $I_1$(5,0.005)    | $I_4$(9.5, 0.0095)  |
-| Uniswap V3 ($\pm1$%)          |                 |                  |                   |$I_3$(9, 0.0045)  |
+| Uniswap V3 ($\pm10$%)         |                 |                  |$I_2(9.02, 0.046)$  | $I_5(9.9, 0.0505)$  |
+| Uniswap V3 ($\pm2$%)          |                 |                  | $I_1(5, 0.005)$   | $I_4(9.5, 0.0095)$  |
+| Uniswap V3 ($\pm1$%)          |                 |                  |                   |$I_3(9, 0.0045)$  |
 
 ![image](https://github.com/user-attachments/assets/c030d4bc-d486-430b-be11-b424a96bc544)
 
@@ -38,5 +38,5 @@ The average trading price is the only thing a trader cares, defined by $\frac{\D
 - Regading three Uniswap V3 pools, each BrownFi pools (K3 & K4) has lower slippage on the left side of the intersecting point, greater on the right, respectively.
 
 Further on capital efficiency comparison, we have:
-![image](https://github.com/user-attachments/assets/212feaf6-e934-47a0-9815-800208439b15)
 
+![image](https://github.com/user-attachments/assets/e2e4f23f-1449-4202-9c8e-a8cf4e8d511e)
