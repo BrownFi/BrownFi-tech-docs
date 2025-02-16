@@ -1,5 +1,4 @@
-# Comparing price impact (slippage) between AMM pools: 
-### Uniswap V2 vs Uniswap V3 vs BrownFi  
+# Comparing price impact (slippage) between AMM pools: Uniswap V2 vs Uniswap V3 vs BrownFi  
 
 ## A little math of AMMs
 **Uniswap V2** introduced constant product market making $x * y=k$, where the token price is defined by token reserve in the pool $p=y/x$. Consider the pool with token reserve (10,10), liquidity and swap constant $x* y=10* 10=100$ with the initial price $P= 1$. A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchange. The constant product formula gives us $(x-\Delta x)(y+\Delta y)=k \Rightarrow \Delta y = \frac{k}{x-\Delta x}-y.$ 
