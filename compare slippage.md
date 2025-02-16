@@ -33,3 +33,7 @@ The average trading price is the only thing a trader cares, defined by $\frac{\D
 ## Slippage (Price impact) comparison
 - Easily see that Uniswap V2 causes greater slippage than all BrownFi pool (for $K<2). Particularly, if $K=2$, then BrownFi and Uniswap V2 are equivalent.
 - Regading three Uniswap V3 pools, each BrownFi pools (K3 & K4) has lower slippage on the left side of the intersecting point, greater on the right, respectively.
+
+Further on capital efficiency comparison, we have:
+![image](https://github.com/user-attachments/assets/212feaf6-e934-47a0-9815-800208439b15)
+
