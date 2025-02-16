@@ -1,15 +1,17 @@
 # Comparing price impact (slippage) between AMM pools: Uniswap V2 vs Uniswap V3 vs BrownFi  
 
 ## A little math of AMMs
-**Uniswap V2** introduced constant product market making $x * y=k$, where the token price is defined by token reserve in the pool $p=y/x$. Consider the pool with token reserve (10,10), liquidity and swap constant $x* y=10* 10=100$ with the initial price $P= 1$. A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchange. The constant product formula gives us $(x-\Delta x)(y+\Delta y)=k \Rightarrow \Delta y = \frac{k}{x-\Delta x}-y.$ 
+**Uniswap V2** introduced constant product market making (CPMM) $x * y=k$, where the token price is defined by token reserve in the pool $p=y/x$. Consider the pool with token reserve (10,10), liquidity and swap constant $x* y=10* 10=100$ with the initial price $P= 1$. A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchange. The constant product formula gives us $(x-\Delta x)(y+\Delta y)=k \Rightarrow \Delta y = \frac{k}{x-\Delta x}-y.$ 
 
-[**Uniswap V3**](https://uniswap.org/whitepaper-v3.pdf) introduced the concentrated liquidity market making (CLMM), allowing us to find a curve limited by a price range such that it can serve the trade with optimal capital. Regarding Uniswap V3 model, a liquidity position is defined by both token reserve $(x, y)$ and a price range $[p_a, p_b]$. The liquidity and swap constant of V3 model reads $(x'+\frac{L}{\sqrt{p_B}})(y'+L\sqrt{p_a})=L^2$, where L is the virtual liquidity (comparable to the equivalent V2 model).   
+[**Uniswap V3**](https://uniswap.org/whitepaper-v3.pdf) introduced the concentrated liquidity market making (CLMM), allowing us to find a curve limited by a price range such that it can serve the trade with optimal capital. Regarding Uniswap V3 model, a liquidity position is defined by both token reserve $(x, y)$ and a price range $[p_a, p_b]$. The liquidity and swap constant of V3 model reads $(x+\frac{L}{\sqrt{p_B}})(y+L\sqrt{p_a})=L^2$, where L is the virtual liquidity (comparable to the equivalent V2 model).   
 
 For simplicity without loss of generality, we take price lower bound $p_a = 1.0001^{-n}$, price upper bound $p_b = 1.0001^n$, symmetrically. For $n=100, p_a= 1.0001^{-100} \approx 0.99$ and $p_b=1.0001^{100} \approx 1.01$, resulting +/-1% range. For $n=200, p_a= 1.0001^{-200} \approx 0.98$ and $p_b = 1.0001^{200} \approx 1.02$, resulting +/-2% range. Let consider 4 ranges of the same token reserve.     
 
 - Uniswap V3 pool1 reserve (10,10), range [-9.5%, +10.5%] (i.e. $n=1000$), liquidity $(x+\frac{1005.06}{1.0001^{500}})(y+\frac{1005.06}{1.0001^{500}})\approx 205.05^2$, liquidity leverage (so capital efficiency) ~ X2.05
 - Uniswap V3 pool2 reserve (10,10), range +/-2%, liquidity $(x+\frac{1005.06}{1.0001^{100}})(y+\frac{1005.06}{1.0001^{100}})\approx 1005.06^2$, capital efficiency ~ X100.5
 - Uniswap V3 pool3 reserve (10,10), range +/-1%, liquidity $(x+\frac{2005.1}{1.0001^{50}})(y+\frac{2005.1}{1.0001^{50}})\approx 2005.1^2$, capital efficiency ~ X200.5
+
+A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchange. The CLMM  formula gives $(x+\frac{L}{\sqrt{p_B}}-\Delta x)(y+L\sqrt{p_a+\Delta y})=L^2$. Because $x=y$ and $\frac{1}{\sqrt{p_B}}=\sqrt{p_a}$, we have $\Delta y=\frac{L}{x+\frac{L}{\sqrt{p_B}}-\Delta x}-x-\frac{L}{\sqrt{p_B}}$.  
 
 [**BrownFi AMM**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a token reserve $(x, y)$ and an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
 
