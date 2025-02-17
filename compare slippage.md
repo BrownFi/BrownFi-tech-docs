@@ -22,20 +22,20 @@ A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchan
 We consider four liquidity concentration on BrownFi AMM, controlled by $K_1=1, K_2=0.1, K_3=0.01$ and $K_4=0.001$. 
 
 ## What do traders care? 
-The average trading price is the only thing a trader cares, defined by $\frac{\Delta y}{\Delta x}$. Smaller price impact, closer trading price to global price, better experience for average traders. Higher liquidity concentration makes lower price impact, smaller slippage, better trading experience. Standardizing token reserve (10,10), initial price $P=1$ for all pools of Uniswap and BrownFi's AMMs, we will compare price slippage $\frac{\Delta y}{\Delta x}-1$ between them. In prior to comparison, we find the intersections of the slippage curves (equivalently price impact curves).  
+The average trading price is the only thing a trader cares, defined by $\frac{\Delta y}{\Delta x}$. Smaller price impact, closer trading price to global price, better experience for average traders. Higher liquidity concentration makes lower price impact, smaller slippage, better trading experience. Standardizing token reserve (10,10), initial price $P=1$ for all pools of Uniswap and BrownFi's AMMs, we will compare price slippage $\frac{\Delta y}{\Delta x}-1$ between them. In prior to comparison, we find the intersections of the slippage curves (equivalently price impact curves). Each intersection represents order size (over the total of 10 token reserve) and percentage of slippage. 
 
-| Slippage curves               | BrownFi $K_1=1$   | BrownFi $K_2=0.1$ | BrownFi $K_3=0.01$  | BrownFi $K_4=0.001$ |
+| Slippage curves               | BrownFi $K_1=1$ | BrownFi $K_2=0.1$ | BrownFi $K_3=0.01$  | BrownFi $K_4=0.001$ |
 | :----------------             | ------:         | ----:            | ----:             |----:     |
 | Uniswap V2                    |                 |                  |                   |  |
-| Uniswap V3 ($\pm10$%)         |                 |                  |$I_2(9.02, 0.046)$  | $I_5(9.9, 0.0505)$  |
-| Uniswap V3 ($\pm2$%)          |                 |                  | $I_1(5, 0.005)$   | $I_4(9.5, 0.0095)$  |
-| Uniswap V3 ($\pm1$%)          |                 |                  |                   |$I_3(9, 0.0045)$  |
+| Uniswap V3 ($\pm10$%)         |                 |                  |$I_2(9.02, 4.6$%)  | $I_5(9.9, 5.05$%)  |
+| Uniswap V3 ($\pm2$%)          |                 |                  | $I_1(5, 0.5$%)   | $I_4(9.5, 0.95$%)  |
+| Uniswap V3 ($\pm1$%)          |                 |                  |                   |$I_3(9, 0.45$%)  |
 
 ![image](https://github.com/user-attachments/assets/c030d4bc-d486-430b-be11-b424a96bc544)
 
 ## Slippage (Price impact) comparison
 - Easily see that Uniswap V2 causes greater slippage than all BrownFi pool (for $K<2). Particularly, if $K=2$, then BrownFi and Uniswap V2 are equivalent.
-- Regading three Uniswap V3 pools, each BrownFi pools (K3 & K4) has lower slippage on the left side of the intersecting point, greater on the right, respectively.
+- Regading three Uniswap V3 pools, each BrownFi pools (K3 & K4) has lower slippage on the left side of the intersecting point, greater on the right, respectively. Particularly, BrownFi $K_4=0.001$ is mostly equivalent to Uniswap V3 range $\pm1$%.
 
 Further on capital efficiency comparison, we have:
 
