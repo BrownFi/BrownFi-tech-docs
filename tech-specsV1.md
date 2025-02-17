@@ -1,4 +1,4 @@
-_This is a technical document, describing all technical specilizations of BrownFi AMM version 1. Contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, universial settings_
+_This is a technical document, describing all technical specilizations of BrownFi AMM version 1. The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, universial settings_
 
 # 1. Math of BrownFi AMM
 [**BrownFi**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a pair (pool) of two tokens with liquidity reserve $(x, y)$ of token X and token Y, respectively. For an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
