@@ -11,7 +11,7 @@ For simplicity without loss of generality, we take price lower bound $p_a = 1.00
 - Uniswap V3 pool2 reserve (10,10), range $\pm2$%, liquidity $(x+\frac{1000}{1.0001^{100}})(y+\frac{1000}{1.0001^{100}})\approx 1000^2$, capital efficiency ~ X100
 - Uniswap V3 pool3 reserve (10,10), range $\pm1$%, liquidity $(x+\frac{2000}{1.0001^{50}})(y+\frac{2000}{1.0001^{50}})\approx 2000^2$, capital efficiency ~ X200
 
-A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchange. The CLMM  formula gives $(x+\frac{L}{\sqrt{p_B}}-\Delta x)(y+L\sqrt{p_a} +\Delta y)=L^2$. Because $x=y$ and $\frac{1}{\sqrt{p_B}}=\sqrt{p_a}$, we have $\Delta y=\frac{L^2}{x+\frac{L}{\sqrt{p_B}}-\Delta x}-x-\frac{L}{\sqrt{p_B}}$.  
+Because $x=y$ and $\frac{1}{\sqrt{p_B}}=\sqrt{p_a}$, we have $(x+\frac{L}{\sqrt{p_B}})^2=L^2, x+\frac{L}{\sqrt{p_B}}=L$. A swap out of $\Delta x$ of token X must provide $\Delta y$ of token Y in exchange. The CLMM  formula gives $(x+\frac{L}{\sqrt{p_B}}-\Delta x)(y+L\sqrt{p_a} +\Delta y)=L^2 \Leftrightarrow (L-\Delta x)(L +\Delta y)=L^2$ and hence $\Delta y=\frac{L^2}{L-\Delta x}-L$.  
 
 [**BrownFi AMM**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a token reserve $(x, y)$ and an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
 
