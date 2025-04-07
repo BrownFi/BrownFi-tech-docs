@@ -1,4 +1,15 @@
-_This is a technical document, describing all technical specilizations of BrownFi AMM version 1. The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, universial settings_
+_This is a technical document, describing all technical specilizations of BrownFi AMM version 2. The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, protocol fee & universial settings_  
+We compare the two versions. BrownFi V1 is audited by Verichain: https://github.com/verichains/public-audit-reports/blob/main/Verichains%20Public%20Audit%20Report%20-%20BrownFi%20AMM%20Smartcontracts%20-%20v1.0.pdf
+
+| Essentials             | BrownFi V1 | BrownFi V2 | 
+| :----------------      | ------:         | ----:            | 
+| Codebase               |   Uniswap V2          |    Uniswap V2     |                   
+| Protocol design       |   follow Uniswap V2   |   follow Uniswap V2  |
+| Price mechanism       |  oracle + price impact   | oracle  + price impact  | 
+| LP share (ERC20 token)  | by token ratio     | by dollar-value           |
+| Trading fee         | applied on amountOUT      | applied on amountIN   | 
+| Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
+
 
 # 1. Math of BrownFi AMM
 [**BrownFi**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a pair (pool) of two tokens with liquidity reserve $(x, y)$ of token X and token Y, respectively. For an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
@@ -7,97 +18,161 @@ _This is a technical document, describing all technical specilizations of BrownF
  - The term $\frac{R}{2}$ is price impact, where $R=\frac{K * \Delta x}{x-\Delta x}$;
  - Kappa ($K$) is the parameter, controlling liquidity concentration on BrownFi's pools.
 
-The Kappa ($K$) is limited by the range $0 < K \leq 2$. Smaller Kappa, greater liquidity concentration. Further on capital efficiency comparison, we have:
+The Kappa ($K$) is limited by the range $0.001 \leq K \leq 2$. Smaller Kappa, greater liquidity concentration. 
 
-![image](https://github.com/user-attachments/assets/e2e4f23f-1449-4202-9c8e-a8cf4e8d511e)
-
-# 2. Protocol design
-BrownFi uses Uniswap V2 as a code base to custom and implement a novel AMM incorporating oracle price and a new trading mechanism. Some critical changes are applied and implemented at:
-
-- The pair contract (liquidity pool contract);
-- The router contract
-
-# 3. Create new pools
+# 2. Liquidity provision
+## 2.1. Create new pools
 Create a new liquidity pool is similar to the design of Uniswap V2 model with some additional changes to adapt with oracle-based design of BrownFi AMM.
 
 - Initiate arbitrary amounts of the token pair $(x, y)$.
-- Set price feed of the token pair.
-- Set liquidity concentration, Kappa parameter.
-- Set the base and the quote tokens. 
+- Set oracle price feed of the token pair.
+- Set liquidity concentration, Kappa parameter, requiring $0.001 \leq K \leq 2$.
+  
 See an example on BrawnFi AMM deployed on Metis mainnet https://andromeda-explorer.metis.io/address/0x36D65d716093344B05c961D65b286fa13dde6f5B?tab=write_contract
 
-# 4. Add/remove liquidity
-Add/remove liquidity on BrownFi AMM's pools follows the convention of Uniswap V2 model. Liquidity position is fungible and based on ERC20 token standard. Add/remove liquidity must be directly proportional to the existing reserve ratio of the pool. 
+## 2.2. Add liquidity
 
-## 4.1. Add LP
-- The current reserves are $(x,y)$, and the existing LP tokens are $E=totalLPtokens, E>0$.  
-- Assume that an LPer enters an amount $x'$ of token X, then the new reserve will become $x \mapsto x + x'$, the adding ratio is $a= \frac{x'}{x}.$ Thus, $y' = a \times y = \frac{x'}{x} \times y$ is the corresponding amount of token Y that the LPer must add along with the amount $x'$ of token X. The new pool reserve will be $(x + x', y + y')$, proportionally with the previous reserve (i.e. $\frac{x}{y}=\frac{x + x'}{y + y'}=\frac{x'}{y'}$).
-- The pool share of the LP is $b=\frac{a}{1+a}=\frac{x'}{x+x'}$ whichever easier, hence minting (issuing) an amount of LP tokens $\frac{b*E}{1-b}=E\times \frac{x'}{x}$ whichever easier.
+In V1, LP is added/removed such that token ratio in the pool is unchanged.
+- **Pros**: strictly compatible with Uniswap V2 design of the core contract.
+- **Cons**: LPers cannot rebalance liquidity between two tokens in the pool. Thus, imbalance of the pool inventory is maintained,
+causing higher price impact on the less side and smaller price impact on the larger side. This is different to UniswapV2 model as its inventory is always 50-50 balanced by dollar value.  
 
-## 4.2. Remove LP 
-An LPer wants to remove his liquidity provision, i.e. redeeming/burning his LP tokens for the pairing assets.  
-- The current reserves are $(x,y)$, and  the total amount $E$ of existing LP tokens, $E>0$.  
-- He has an amount $e$ of LP tokens, hence his LP share is $e/E$.
-- When burning $e$ LP tokens, he will receive $\frac{e}{E}\times x$ token X and $\frac{e}{E}\times y$ token Y. Trading fee is automatically accrued in the LP share.
+![image](https://github.com/user-attachments/assets/dcb8500b-f200-4d92-9711-645598fc0630)
 
-# 5. Swap formulas
+We want to  extend the framework to reduce the cons, improving LP UX. This can be done by converting assets to **USD value** (or a pre-defined quote asset), then computing LP share. Price-feed is required to compute dollar value of the pool and new adding LP.  
 
-## 5.1. Backward computation (get amountIN)
+-  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
+-  Assume that at a specific time $t$, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$, and the pool value $V= x * P_X + y * P_Y$.
+-  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P_X + y' * P_Y$. His liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or $newLP=E\times \frac{B}{V}$.
+
+### Trick at LP initiation
+When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar price $P_X, P_Y$, and the initiating value $B= x * P_X + y * P_Y$. Then we do:
+- mint the minimum amount of LP $E_0=1000$ and send to DEAD address (i.e. burn to 0x0...00);
+- mint the initiating amount of LP token $E_1=B$, i.e. setting $E_0/V_0=1$. 
+
+## 2.3. Remove LP 
+-  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
+-  Assume that at a specific time, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$, and the pool value $V= x * P_X + y * P_Y$.
+-  Bob wanna remove LP share by burning an amount of $s$ LP tokens to receive $(x', y')$ token X and token Y, repectively. We must ensure the equality by USD-value $\frac{s}{E}=\frac{B}{V}$ where $B = x' * P_X + y' * P_Y$. This equation may have infinite number of solutions. Thus, additionally, we require a proportional withdrawal on both sides of the pool reserve, i.e. $\frac{x'}{x}=\frac{y'}{y}$. 
+-  The solution presenting amounts of LP withdrawal is $x' = \frac{s}{E}x, y' = \frac{s}{E}y$, satisfying all our requirements.
+
+# 3. Pool state verification
+
+Per swap, the pool must be guaranteed that post-trade inventory (**without fee**) is greater or equal pre-trade inventory plus premium (price impact). The verification method to ensure a safe accounting for LP regardless computing process (with rounding).   
+
+**NOTE**: Trading fee is applied on amountIN only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
+
+read more about Math here https://github.com/BrownFi/BrownAMM-dev/blob/main/math-verification.md
+
+Per swap, the pool must be guaranteed that post-trade inventory (**without fee**) is greater or equal pre-trade inventory plus premium (price impact). The verification method to ensure a safe accounting for LP regardless computing process (with rounding).   
+
+**NOTE**: Trading fee is applied on amountIN (**excluding fee**) only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
+
+## 3.1. BUY verification
+- Oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$. Pre-trade inventory $xP_X + yP_Y$. 
+- For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P_X + (y+dy)P_Y$.  
+
+Pool contract **verifies** the two condition:
+- $10 * dx \leq 9 * x$
+- MUST hold $(x-dx)P_X + (y+dy)P_Y - \frac{(P_Y/P_X) * K * dx * dx}{2(x-dx)} \geq (xP_X + yP_Y)$.
+
+## 3.2. SELL verification
+- Oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$. Pre-trade inventory $xP_X + yP_Y$. 
+- For, pseudo amountIN $dx$ (**without fee**) and actual amountOUT $dy$, we compute post-trade inventory $(x+dx)P_X + (y-dy)P_Y$.  
+
+Pool contract **verifies** the two condition:
+- $10 * dy \leq 9 * y$
+- MUST hold $(x+dx)P_X + (y-dy)P_Y  - \frac{K * dy * dy}{2(y-dy)} \geq (xP + y)P_Y$.  
+
+# 4. Swap formulas
+BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1, except trading fee is **applied** for **amountOUT** (instead of _amountIN_ in V1).
+
+## 4.1. Backward computation (get amountin) 
 > there are two cases of a trade:   
-> - (**B1-buy**) take OUT $Dx$ amount of token X => calculate _put IN_ amount $Dy$ of token Y,   
-> - (**B2-sell**) take OUT $Dy$ amount of token Y => calculate _put IN_ amount $Dx$ of token X.
+> - (**B1**) take OUT $dx$ amount of token X => calculate _put IN_ amount $dy$ of token Y,   
+> - (**B2**) take OUT $dy$ amount of token Y => calculate _put IN_ amount $dx$ of token X.
 
-### 5.1.1. If (**B1-buy**): traders enter expecting _amountOUT_ $Dx$ of token X.  
-1. Adding fee $dx=Dx *(1+fee)$. This is the _pseudo amountOUT_ used to compute price impact, trading price below. 
-2. CHECK $10 * dx < 9 * x$, otherwise invalid.
-3. Compute price impact $R=\frac{K*dx}{(x-dx)}$.
-4. Token X price fed by oracle $p=P_{X/Y}$ (i.e. quoted by Y). 
-5. Compute average trading price $p_t = p * (1 + R/2)$. 
-6. Compute _amountIN_ $dy=dx * p_t$, this is also the **actual** _amountIN_ $Dy = dy$. 
-7. Swap  $Dy$ amountIN of token Y for  $Dx$ amountOUT of token X.
-8. The post-trade pool state is $(xt=x - Dx, yt=y + Dy).$
-9. Pool verification $(x-dx)P + (y+dy) \geq (xP + y) + \frac{P * K * dx * dx}{2(x-dx)}$
- 
-### 5.1.2. If (**B2-sell**): traders enter expecting _amountOUT_ $Dy$ of token Y.  
-1. Adding fee $dy=Dy *(1+fee)$. This is the _pseudo amountOUT_ used to compute price impact, trading price below.
-2. CHECK $10 * dy < 9 * y$, otherwise invalid.
-3. Compute price impact $R=\frac{K* dy}{(y-dy)}$. 
-4. Token Y price fed by oracle  $p=P_{Y/X}=\frac{1}{P_{X/Y}}$. (i.e. quoted by X). 
-5. Compute average trading price $p_t = p * (1 + R/2) = \frac{1}{P_{X/Y}} * (1 + R/2)$. 
-6. Compute _amountIN_ $dx=dy * p_t$, this is also the **actual** _amountIN_ $Dx = dx$. 
-7. Swap  $Dx$ amountIN of token X for  $Dy$ amountOUT of token Y.
-8. The post-trade pool state is updated as $(xt=x + Dx, yt=y - Dy)$.
-9. Pool verification $(x+dx)P + (y-dy) \geq (xP + y) + \frac{K * dy * dy}{2(y-dy)}$.
+### 4.1.1. If (**B1**): enter/give _amountOUT_ $dx$ of token X. 
+1. CHECK $10 * dx \leq 9 * x$, otherwise exceed limit (failed).
+2. Compute price impact $R=K*dx/(x-dx)$
+3. Token X price fed by oracle $p=P_{X/Y}$ (i.e. quoted by Y). 
+4. Compute average trading price $Pt = p * (1 + R/2)$.
+5. Compute _pseudo amountIN_ $dy=dx * Pt$.
+6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x-dx)p + (y+dy) - \frac{P * K * dx * dx}{2(x-dx)} \geq (x* p + y)$.
+7. Add fee to _amountIN_, compute actual _amountIN_ $Dy = dy*(1+fee)$. => check trader's token balance to ensure the trader has sufficient amount of token X for swap.
+8. Swap  $Dy$ amountIN of token Y for  $dx$ amountOUT of token X.
 
+> The post-trade pool state is $(xt=x - dx, yt=y + Dy).$   
 
-## 5.2) Forward computation (get amountOUT)
+### 5.1.2. If (**B2-sell**): traders enter expecting _amountOUT_ $dy$ of token Y.  
+1. CHECK $10 * dy \leq 9 * y$, otherwise exceed limit (failed).
+2. Compute price impact $R=\frac{K* dy}{(y-dy)}$. 
+3. Token Y price fed by oracle  $p=P_{Y/X}=\frac{1}{P_{X/Y}}$. (i.e. quoted by X). 
+4. Compute average trading price $P_t = p * (1 + R/2) = \frac{1}{P_{X/Y}} * (1 + R/2)$. 
+5. Compute _pseudo amountIN_ $dx=dy * P_t$.
+6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x+dx)p + (y-dy) - \frac{K * dy * dy}{2(y-dy)} \geq (x* p + y)$.
+7. Add fee to _amountIN_, compute actual _amountIN_  $Dx = dx*(1+fee)$. => check trader's token balance to ensure the trader has sufficient amount of token X for swap.
+8. Swap  $Dx$ amountIN of token X for  $dy$ amountOUT of token Y.
+
+> The post-trade pool state is updated as $(xt=x + Dx, yt=y - dy)$.   
+
+## 4.2. Forward computation (get amountOUT)
 
 There are two cases of a trade:
 - (B1-buy) enter _amountIN_ of token Y => calculate _amountOUT_ of token X,  
 - (B2-sell) enter _amountIN_ of token X => calculate _amountOUT_ of token Y.
 
-### 5.2.1. (B1-buy) 
+Visit the detail of finding the [solutions HERE](https://github.com/BrownFi/BrownAMM-intro/blob/main/solving-quadratic.md). Note that $K$ is limited within range &0.001 \leq K \leq 2$. and we have one unique solution per case $K=2$ or $K<2$. 
+
+### 4.2.1. (B1-buy) 
 Traders enter **actual** _amountIN_ $Dy$ of token Y => find **actual** _amountOUT_ $Dx$ of token X.  
 1. Token X price fed by oracle $p=P_{X/Y}$ (i.e. quoted by Y). 
-2. Compute _pseudo_ amountOUT $dx = \frac{px+Dy - \sqrt{(px-Dy)^2+2pKxDy}}{p(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dx=\frac{xDy}{px+Dy}$, and the **actual** amountOUT is $Dx=dx/(1+ fee)$. 
-3. Return to Steps (1 to 6) of Section 5.1.1 in Backward computation.  
+2. Compute _pseudo_ amountIN $dy=Dy/(1+fee)$.
+3. Compute actual amountOUT $dx = \frac{p* x+dy - \sqrt{(p* x-dy)^2+2p* K* x* dy}}{p(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dx=\frac{x* dy}{p* x+dy}$. 
+4. Return to Steps (1 to 6) of Section 1.1.1 in Backward computation.  
 
-
-### 5.2.2. (B1-sell) 
+### 4.2.2. (B1-sell) 
 Traders enter **actual** _amountIN_ $Dx$ of token X => find _amountOUT_ $Dy$ of token Y.  
 1. Token X price fed by oracle  $p=P_{X/Y}$. (i.e. quoted by Y).  
-2. Compute _pseudo_ amountOUT $dy = \frac{pDx+y - \sqrt{(pDx-y)^2+2pKyDx}}{(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dy=\frac{pyDx}{pDx+y}$, and the **actual** amountOUT is $Dy=dy/(1+fee)$.  
-3. Return to Steps (1 to 6) of Section 5.1.2 in Backward computation.
+2. Compute _pseudo_ amountIN $dx=Dx/(1+fee)$.
+3. Compute actual amountOUT $dy = \frac{p* dx+y - \sqrt{(p* dx-y)^2+2p* K* y* dx}}{(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dy=\frac{p* y* dx}{p* dx+y}$.  
+4. Return to Steps (1 to 6) of Section 1.1.2 in Backward computation.
 
 
-## 5.3. Computing flow diagram
+## 4.3. Computing flow diagram
 
-This flow is REGULAR on BrownFi AMM by math, and suggested. It always gives exact amountOUT (not exact amountIN). https://drive.google.com/file/d/1LkCCukacMpgUdiXJLXljp-AUGA3IKxPu/view?usp=sharing 
+This flow is REGULAR on BrownFi AMM by math, and suggested. https://drive.google.com/file/d/1LkCCukacMpgUdiXJLXljp-AUGA3IKxPu/view?usp=sharing 
 ![image](https://github.com/user-attachments/assets/b8f32df1-8c78-4a92-b52d-2691ec1fdbce)
+
+# 5. Protocol fee (splitted for the developer)
+
+Per swap, LPers earn premium fee (derived from price impact) and trading fee. The LP revenue (= premium + trading fee) is partially splitted into protocol fee for the protocol developer.   
+
+- Trading fee is a configurable param, defined by a percentage of order size. More precisely, trading fee equals $fee * amountIN$, current $fee =0.3$%. Read [swap & fee computation at router](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=51336823).  
+- Protocol fee equals $m * revenue$, where $0\leq m \leq 1$ is a configurable param.
+- The protocol fee is splitted per swap and sent to a pre-defined address.  
+- By default, protocol fee is $m=0.2$ (i.e. 20% of LP revenue).
+
+**Implement fee split at the core contract**, so dev earns fee for all routers (including aggregators).
+
+**Requirement**: dollar-valued LP
+
+**Solution**: mint LP token for dev per swap according to the amount of protocol fee. See here https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597
+
+## Computing method
+
+-  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
+-  Assume that before swap (pre-trade), the pool has token reserve $(x0, y0)$ with corresponding dollar price $P_X, P_Y$, and the pool USD-value $V0= x0 * P_X + y0 * P_Y$.
+- After swap (post-trade), the pool has token reserve $(x1, y1)$ with the same dollar price $P_X, P_Y$, and the new USD-value of the pool is $V1= x1 * P_X + y1 * P_Y$.
+- The protocol fee is $PF = (V1 - V0) * m$. 
+- Mint an amount of new LP token by $newLP=E * \frac{PF}{V1}$ then transfer to the dev wallet (or update LP token balance for the dev wallet for later claim/withdraw). This should be compatible with  [adding new LP issue](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597) and equivalently to [LP computation](https://github.com/BrownFi/BrownAMM-dev/blob/main/compute-LP.md). 
+
+The dev may claim their revenue anytime using their LP token (balance). The price to compute the dev LP is the same as the fetched price for the swap.
+
 
 # 6. Universial settings
 The following settings are universially applied for all BrownFi AMM's pools.  
 
-- **Kappa** (the parameter controlling liquidity concentration) is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
-- **Trading fee** is applied for _amountOUT only_, and $fee = 0.0025$, i.e. 0.25%.
-- **Protocol fee** is currently zero, i.e. NO fee split for the developer.
+- **Kappa** (the parameter controlling liquidity concentration) is limited in the range &0.001 \leq K \leq 2$. The defaut is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
+- **Trading fee** is applied for _amountOUT only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$.
+- Protocol fee $m$ is a configurable param, where $0\leq m \leq 1$.
