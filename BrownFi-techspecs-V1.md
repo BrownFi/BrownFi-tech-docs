@@ -7,9 +7,7 @@ _This is a technical document, describing all technical specilizations of BrownF
  - The term $\frac{R}{2}$ is price impact, where $R=\frac{K * \Delta x}{x-\Delta x}$;
  - Kappa ($K$) is the parameter, controlling liquidity concentration on BrownFi's pools.
 
-The Kappa ($K$) is limited by the range $0 < K \leq 2$. Smaller Kappa, greater liquidity concentration. Further on capital efficiency comparison, we have:
-
-![image](https://github.com/user-attachments/assets/e2e4f23f-1449-4202-9c8e-a8cf4e8d511e)
+The Kappa ($K$) is limited by the range $0 < K \leq 2$. Smaller Kappa, greater liquidity concentration. 
 
 # 2. Protocol design
 BrownFi uses Uniswap V2 as a code base to custom and implement a novel AMM incorporating oracle price and a new trading mechanism. Some critical changes are applied and implemented at:
