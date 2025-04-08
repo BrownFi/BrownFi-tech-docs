@@ -1,5 +1,7 @@
 _This is a technical document, describing all technical specilizations of BrownFi AMM version 2. The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, protocol fee & universial settings_  
-We compare the two versions. BrownFi V1 is audited by Verichain: https://github.com/verichains/public-audit-reports/blob/main/Verichains%20Public%20Audit%20Report%20-%20BrownFi%20AMM%20Smartcontracts%20-%20v1.0.pdf
+BrownFi V1 is audited by Verichain, see [audit report](https://github.com/verichains/public-audit-reports/blob/main/Verichains%20Public%20Audit%20Report%20-%20BrownFi%20AMM%20Smartcontracts%20-%20v1.0.pdf)
+
+**We compare the two versions.**
 
 | Essentials             | BrownFi V1 | BrownFi V2 | 
 | :----------------      | ------:         | ----:            | 
@@ -16,7 +18,7 @@ We compare the two versions. BrownFi V1 is audited by Verichain: https://github.
 
  - $\Delta y = P(1+\frac{R}{2})\Delta x$, where $P$ is the global price fed by oracle;
  - The term $\frac{R}{2}$ is price impact, where $R=\frac{K * \Delta x}{x-\Delta x}$;
- - Kappa ($K$) is the parameter, controlling liquidity concentration on BrownFi's pools.
+ - Kappa ($K$) is an adjustable and configurable parameter, controlling liquidity concentration on BrownFi's pools.
 
 The Kappa ($K$) is limited by the range $0.001 \leq K \leq 2$. Smaller Kappa, greater liquidity concentration. 
 
@@ -36,8 +38,7 @@ In V1, LP is added/removed such that token ratio in the pool is unchanged.
 - **Pros**: strictly compatible with Uniswap V2 design of the core contract.
 - **Cons**: LPers cannot rebalance liquidity between two tokens in the pool. Thus, imbalance of the pool inventory is maintained,
 causing higher price impact on the less side and smaller price impact on the larger side. This is different to UniswapV2 model as its inventory is always 50-50 balanced by dollar value.  
-
-![image](https://github.com/user-attachments/assets/dcb8500b-f200-4d92-9711-645598fc0630)
+![image](https://github.com/user-attachments/assets/ff71695b-ce81-4f1c-beeb-1b5ea136ea28)
 
 We want to  extend the framework to reduce the cons, improving LP UX. This can be done by converting assets to **USD value** (or a pre-defined quote asset), then computing LP share. Price-feed is required to compute dollar value of the pool and new adding LP.  
 
