@@ -103,7 +103,7 @@ BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1,
 
 > The post-trade pool state is $(xt=x - dx, yt=y + Dy).$   
 
-### 5.1.2. If (**B2-sell**): traders enter expecting _amountOUT_ $dy$ of token Y.  
+### 4.1.2. If (**B2-sell**): traders enter expecting _amountOUT_ $dy$ of token Y.  
 1. CHECK $10 * dy \leq 9 * y$, otherwise exceed limit (failed).
 2. Compute price impact $R=\frac{K* dy}{(y-dy)}$. 
 3. Token Y price fed by oracle  $P=P_{Y/X}=\frac{1}{P_{X/Y}}$. (i.e. quoted by X). 
@@ -121,21 +121,21 @@ There are two cases of a trade:
 - (B1-buy) enter _amountIN_ of token Y => calculate _amountOUT_ of token X,  
 - (B2-sell) enter _amountIN_ of token X => calculate _amountOUT_ of token Y.
 
-Visit the detail of finding the [solutions HERE](https://github.com/BrownFi/BrownAMM-intro/blob/main/solving-quadratic.md). Note that $K$ is limited within range $0.001 \leq K \leq 2$. and we have one unique solution per case $K=2$ or $K<2$. 
+Visit the detail of finding the [solutions HERE](https://github.com/BrownFi/BrownAMM-intro/blob/main/solving-quadratic.md). Note that $K$ is limited within range $0.001 \leq K \leq 2$. and we have one unique solution per case $K=2$ or $K<2$.   
+
+Token price fed by oracle $P_X, P_Y$ (i.e. quoted by US dollar).  
 
 ### 4.2.1. (B1-buy) 
 Traders enter **actual** _amountIN_ $Dy$ of token Y => find **actual** _amountOUT_ $Dx$ of token X.  
-1. Token X price fed by oracle $p=P_{X/Y}$ (i.e. quoted by Y). 
-2. Compute _pseudo_ amountIN $dy=Dy/(1+fee)$.
-3. Compute actual amountOUT $dx = \frac{p* x+dy - \sqrt{(p* x-dy)^2+2p* K* x* dy}}{p(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dx=\frac{x* dy}{p* x+dy}$. 
-4. Return to Steps (1 to 6) of Section 1.1.1 in Backward computation.  
+1. Compute _pseudo_ amountIN $dy=Dy/(1+fee)$.
+2. Compute actual amountOUT $dx = \frac{xP_X+dyP_Y - \sqrt{(xP_X-dyP_Y)^2+2P_X * P_Y K* x* dy}}{p(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dx=\frac{xdyP_Y}{xP_X+dyP_Y}$. 
+3. Return to Steps (1 to 6) of Section 4.1.1 in Backward computation.  
 
 ### 4.2.2. (B1-sell) 
 Traders enter **actual** _amountIN_ $Dx$ of token X => find _amountOUT_ $Dy$ of token Y.  
-1. Token X price fed by oracle  $p=P_{X/Y}$. (i.e. quoted by Y).  
-2. Compute _pseudo_ amountIN $dx=Dx/(1+fee)$.
-3. Compute actual amountOUT $dy = \frac{p* dx+y - \sqrt{(p* dx-y)^2+2p* K* y* dx}}{(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dy=\frac{p* y* dx}{p* dx+y}$.  
-4. Return to Steps (1 to 6) of Section 1.1.2 in Backward computation.
+1. Compute _pseudo_ amountIN $dx=Dx/(1+fee)$.
+2. Compute actual amountOUT $dy = \frac{P_Xdx+yP_Y - \sqrt{(P_Xdx-yP_Y)^2+2P_XP_Y * K* y* dx}}{P_Y(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dy=\frac{p* y* dx}{p* dx+y}$.  
+3. Return to Steps (1 to 6) of Section 4.1.2 in Backward computation.
 
 
 ## 4.3. Computing flow diagram
