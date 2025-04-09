@@ -8,7 +8,9 @@ BrownFi V1 is audited by Verichain, see [audit report](https://github.com/verich
 | Codebase               |   Uniswap V2          |    Uniswap V2     |                   
 | Protocol design       |   follow Uniswap V2   |   follow Uniswap V2  |
 | Price mechanism       |  oracle + price impact   | oracle  + price impact  | 
-| LP share (ERC20 token)  | by token ratio     | by dollar-value           |
+| LP share              | ERC20 token           | ERC20 token       |
+| Add LP                | by token ratio     | 50-50 by dollar-value      |
+| Remove LP             | by token ratio     | by token ratio        |
 | Trading fee         | applied on amountOUT      | applied on amountIN   | 
 | Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
 
