@@ -44,8 +44,7 @@ We want to  extend the framework to reduce the cons, improving LP UX. This can b
 
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
 -  Assume that at a specific time $t$, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$, and the pool value $V= x * P_X + y * P_Y$.
--  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P_X + y' * P_Y$. His liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or $newLP=E\times \frac{B}{V}$.
-
+-  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P_X + y' * P_Y$. His liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or **$newLP=E\times \frac{B}{V}$.** 
 ### Trick at LP initiation
 When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar price $P_X, P_Y$, and the initiating value $B= x * P_X + y * P_Y$. Then we do:
 - mint the minimum amount of LP $E_0=1000$ and send to DEAD address (i.e. burn to 0x0...00);
@@ -63,14 +62,10 @@ Per swap, the pool must be guaranteed that post-trade inventory (**without fee**
 
 **NOTE**: Trading fee is applied on amountIN only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
 
-read more about Math here https://github.com/BrownFi/BrownAMM-dev/blob/main/math-verification.md
-
-Per swap, the pool must be guaranteed that post-trade inventory (**without fee**) is greater or equal pre-trade inventory plus premium (price impact). The verification method to ensure a safe accounting for LP regardless computing process (with rounding).   
-
-**NOTE**: Trading fee is applied on amountIN (**excluding fee**) only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
+Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$ both quoted by dollar. Thus 
 
 ## 3.1. BUY verification
-- Oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$. Pre-trade inventory $xP_X + yP_Y$. 
+ Pre-trade inventory $xP_X + yP_Y$. 
 - For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P_X + (y+dy)P_Y$.  
 
 Pool contract **verifies** the two condition:
