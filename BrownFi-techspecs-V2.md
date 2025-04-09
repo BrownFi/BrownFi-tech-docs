@@ -49,7 +49,7 @@ We want to  extend the framework to reduce the cons, improving LP UX. This can b
 ### Trick at LP initiation
 When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar price $P_X, P_Y$, and the initiating value $B= x * P_X + y * P_Y$. Then we do:
 - mint the minimum amount of LP $E_0=1000$ and send to DEAD address (i.e. burn to 0x0...00);
-- mint the initiating amount of LP token $E_1=B$, i.e. setting $E_0/V_0=1$. 
+- mint the initiating amount of LP token $E_1=B$ for the pool creator, i.e. setting $E_0/V_0=1$. 
 
 ## 2.3. Remove LP 
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
@@ -59,7 +59,7 @@ When someone initiates a pool, we must pass the ZERO state. Assume the we initia
 
 # 3. Pool state verification
 
-Per swap, the pool must be guaranteed that post-trade inventory (**without fee**) is greater or equal pre-trade inventory plus premium (price impact). The verification method to ensure a safe accounting for LP regardless computing process (with rounding).   
+Per swap, the pool must be guaranteed that post-trade inventory (**without fee**) is greater or equal pre-trade inventory plus premium (price impact). The verification method to ensure a safe accounting for LP regardless computing process (with rounding and routing).   
 
 **NOTE**: Trading fee is applied on amountIN only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
 
@@ -142,8 +142,9 @@ Traders enter **actual** _amountIN_ $Dx$ of token X => find _amountOUT_ $Dy$ of 
 
 ## 4.3. Computing flow diagram
 
-This flow is REGULAR on BrownFi AMM by math, and suggested. https://drive.google.com/file/d/1LkCCukacMpgUdiXJLXljp-AUGA3IKxPu/view?usp=sharing 
-![image](https://github.com/user-attachments/assets/b8f32df1-8c78-4a92-b52d-2691ec1fdbce)
+This flow is REGULAR on BrownFi AMM by math, and suggested. 
+![image](https://github.com/user-attachments/assets/e4fdb0f2-9018-4182-9d09-9bfaf93baca7)
+
 
 # 5. Protocol fee (splitted for the developer)
 
