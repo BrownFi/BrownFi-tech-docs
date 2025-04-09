@@ -18,7 +18,7 @@ BrownFi V1 is audited by Verichain, see [audit report](https://github.com/verich
 # 1. Math of BrownFi AMM
 [**BrownFi**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a pair (pool) of two tokens with liquidity reserve $(x, y)$ of token X and token Y, respectively. For an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
 
- - $\Delta y = P(1+\frac{R}{2})\Delta x$, where $P$ is the global price fed by oracle;
+ - $\Delta y = P(1+\frac{R}{2})\Delta x$, where $P=P_{X/Y}$ is the global price of X, quoted by Y, fed by oracle;
  - The term $\frac{R}{2}$ is price impact, where $R=\frac{K * \Delta x}{x-\Delta x}$;
  - Kappa ($K$) is an adjustable and configurable parameter, controlling liquidity concentration on BrownFi's pools.
 
@@ -64,24 +64,24 @@ Per swap, the pool must be guaranteed that post-trade inventory (**without fee**
 
 **NOTE**: Trading fee is applied on amountIN only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
 
-Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$ both quoted by dollar. Thus, price of token X quoted by token Y will be $P=P_X/P_Y$. For simplicity, we will use one price quantity $P=P_{X/Y}$ to verify inventory, regarding Y as the quote token (e.g. stablecoin or US dollar). 
+Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$ both quoted by US dollar.  
 
 
 ## 3.1. BUY verification
- Pre-trade inventory $xP + y$. 
-- For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P + (y+dy)$.  
+ Pre-trade inventory $xP_X + yP_Y$. 
+- For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P_X + (y+dy)P_Y$.  
 
 Pool contract **verifies** the two condition:
 - $10 * dx \leq 9 * x$
-- MUST hold $(x-dx)P + (y+dy) - \frac{P * K * dx * dx}{2(x-dx)} \geq (xP + y)$.
+- MUST hold $(x-dx)P_X + (y+dy)P_Y - P_X\frac{K * dx * dx}{2(x-dx)} \geq (xP_X + yP_Y)$.
 
 ## 3.2. SELL verification
-- Pre-trade inventory $xP + y$. 
-- For, pseudo amountIN $dx$ (**without fee**) and actual amountOUT $dy$, we compute post-trade inventory $(x+dx)P + (y-dy)$.  
+- Pre-trade inventory $xP_X + yP_Y$. 
+- For, pseudo amountIN $dx$ (**without fee**) and actual amountOUT $dy$, we compute post-trade inventory $(x+dx)P_X + (y-dy)P_Y$.  
 
 Pool contract **verifies** the two condition:
 - $10 * dy \leq 9 * y$
-- MUST hold $(x+dx)P + (y-dy)  - \frac{K * dy * dy}{2(y-dy)} \geq (xP + y)$.  
+- MUST hold $(x+dx)P_X + (y-dy)P_Y  - P_Y\frac{K * dy * dy}{2(y-dy)} \geq (xP_X + yP_Y)$.  
 
 # 4. Swap formulas
 BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1, except trading fee is **applied** for **amountOUT** (instead of _amountIN_ in V1).
@@ -94,10 +94,10 @@ BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1,
 ### 4.1.1. If (**B1**): enter/give _amountOUT_ $dx$ of token X. 
 1. CHECK $10 * dx \leq 9 * x$, otherwise exceed limit (failed).
 2. Compute price impact $R=K*dx/(x-dx)$
-3. Token X price fed by oracle $p=P_{X/Y}$ (i.e. quoted by Y). 
-4. Compute average trading price $Pt = p * (1 + R/2)$.
+3. Token X price fed by oracle $P=P_{X/Y}$ (i.e. quoted by Y). 
+4. Compute average trading price $Pt = P * (1 + R/2)$.
 5. Compute _pseudo amountIN_ $dy=dx * Pt$.
-6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x-dx)p + (y+dy) - \frac{P * K * dx * dx}{2(x-dx)} \geq (x* p + y)$.
+6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x-dx)P_X + (y+dy)P_Y - P_X\frac{K * dx * dx}{2(x-dx)} \geq (x* P_X + yP_Y)$.
 7. Add fee to _amountIN_, compute actual _amountIN_ $Dy = dy*(1+fee)$. => check trader's token balance to ensure the trader has sufficient amount of token X for swap.
 8. Swap  $Dy$ amountIN of token Y for  $dx$ amountOUT of token X.
 
@@ -106,10 +106,10 @@ BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1,
 ### 5.1.2. If (**B2-sell**): traders enter expecting _amountOUT_ $dy$ of token Y.  
 1. CHECK $10 * dy \leq 9 * y$, otherwise exceed limit (failed).
 2. Compute price impact $R=\frac{K* dy}{(y-dy)}$. 
-3. Token Y price fed by oracle  $p=P_{Y/X}=\frac{1}{P_{X/Y}}$. (i.e. quoted by X). 
-4. Compute average trading price $P_t = p * (1 + R/2) = \frac{1}{P_{X/Y}} * (1 + R/2)$. 
+3. Token Y price fed by oracle  $P=P_{Y/X}=\frac{1}{P_{X/Y}}$. (i.e. quoted by X). 
+4. Compute average trading price $P_t = P * (1 + R/2) = \frac{1}{P_{X/Y}} * (1 + R/2)$. 
 5. Compute _pseudo amountIN_ $dx=dy * P_t$.
-6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x+dx)p + (y-dy) - \frac{K * dy * dy}{2(y-dy)} \geq (x* p + y)$.
+6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x+dx)P_X + (y-dy)P_Y - P_Y\frac{K * dy * dy}{2(y-dy)} \geq (x* P_X + yP_Y)$.
 7. Add fee to _amountIN_, compute actual _amountIN_  $Dx = dx*(1+fee)$. => check trader's token balance to ensure the trader has sufficient amount of token X for swap.
 8. Swap  $Dx$ amountIN of token X for  $dy$ amountOUT of token Y.
 
@@ -121,7 +121,7 @@ There are two cases of a trade:
 - (B1-buy) enter _amountIN_ of token Y => calculate _amountOUT_ of token X,  
 - (B2-sell) enter _amountIN_ of token X => calculate _amountOUT_ of token Y.
 
-Visit the detail of finding the [solutions HERE](https://github.com/BrownFi/BrownAMM-intro/blob/main/solving-quadratic.md). Note that $K$ is limited within range &0.001 \leq K \leq 2$. and we have one unique solution per case $K=2$ or $K<2$. 
+Visit the detail of finding the [solutions HERE](https://github.com/BrownFi/BrownAMM-intro/blob/main/solving-quadratic.md). Note that $K$ is limited within range $0.001 \leq K \leq 2$. and we have one unique solution per case $K=2$ or $K<2$. 
 
 ### 4.2.1. (B1-buy) 
 Traders enter **actual** _amountIN_ $Dy$ of token Y => find **actual** _amountOUT_ $Dx$ of token X.  
@@ -148,7 +148,7 @@ This flow is REGULAR on BrownFi AMM by math, and suggested.
 
 Per swap, LPers earn premium fee (derived from price impact) and trading fee. The LP revenue (= premium + trading fee) is partially splitted into protocol fee for the protocol developer.   
 
-- Trading fee is a configurable param, defined by a percentage of order size. More precisely, trading fee equals $fee * amountIN$, current $fee =0.3$%. Read [swap & fee computation at router](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=51336823).  
+- Trading fee is a configurable param, defined by a percentage of order size. More precisely, trading fee equals $fee * amountIN$, current $fee =0.3$%. 
 - Protocol fee equals $m * revenue$, where $0\leq m \leq 1$ is a configurable param.
 - The protocol fee is splitted per swap and sent to a pre-defined address.  
 - By default, protocol fee is $m=0.2$ (i.e. 20% of LP revenue).
@@ -157,7 +157,7 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Th
 
 **Requirement**: dollar-valued LP
 
-**Solution**: mint LP token for dev per swap according to the amount of protocol fee. See here https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597
+**Solution**: mint LP token for dev per swap according to the amount of protocol fee. 
 
 ## Computing method
 
