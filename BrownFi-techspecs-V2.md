@@ -62,23 +62,24 @@ Per swap, the pool must be guaranteed that post-trade inventory (**without fee**
 
 **NOTE**: Trading fee is applied on amountIN only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
 
-Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$ both quoted by dollar. Thus 
+Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$ both quoted by dollar. Thus, price of token X quoted by token Y will be $P=P_X/P_Y$. For simplicity, we will use one price quantity $P=P_{X/Y}$ to verify inventory, regarding Y as the quote token (e.g. stablecoin or US dollar). 
+
 
 ## 3.1. BUY verification
- Pre-trade inventory $xP_X + yP_Y$. 
-- For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P_X + (y+dy)P_Y$.  
+ Pre-trade inventory $xP + y$. 
+- For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P + (y+dy)$.  
 
 Pool contract **verifies** the two condition:
 - $10 * dx \leq 9 * x$
-- MUST hold $(x-dx)P_X + (y+dy)P_Y - \frac{(P_Y/P_X) * K * dx * dx}{2(x-dx)} \geq (xP_X + yP_Y)$.
+- MUST hold $(x-dx)P + (y+dy) - \frac{P * K * dx * dx}{2(x-dx)} \geq (xP + y)$.
 
 ## 3.2. SELL verification
-- Oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$. Pre-trade inventory $xP_X + yP_Y$. 
-- For, pseudo amountIN $dx$ (**without fee**) and actual amountOUT $dy$, we compute post-trade inventory $(x+dx)P_X + (y-dy)P_Y$.  
+- Pre-trade inventory $xP + y$. 
+- For, pseudo amountIN $dx$ (**without fee**) and actual amountOUT $dy$, we compute post-trade inventory $(x+dx)P + (y-dy)$.  
 
 Pool contract **verifies** the two condition:
 - $10 * dy \leq 9 * y$
-- MUST hold $(x+dx)P_X + (y-dy)P_Y  - \frac{K * dy * dy}{2(y-dy)} \geq (xP + y)P_Y$.  
+- MUST hold $(x+dx)P + (y-dy)  - \frac{K * dy * dy}{2(y-dy)} \geq (xP + y)$.  
 
 # 4. Swap formulas
 BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1, except trading fee is **applied** for **amountOUT** (instead of _amountIN_ in V1).
