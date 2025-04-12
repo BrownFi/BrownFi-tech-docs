@@ -5,7 +5,7 @@ BrownFi V1 is audited by Verichain, see [audit report](https://github.com/verich
 
 | Essentials             | BrownFi V1 | BrownFi V2 | 
 | :----------------      | ------:         | ----:            | 
-| Codebase               |   Uniswap V2          |    Uniswap V2     |                   
+| Codebase               |   [Uniswap V2](https://github.com/Uniswap/v2-core)          |     [Uniswap V2](https://github.com/Uniswap/v2-core)       |                   
 | Protocol design       |   follow Uniswap V2   |   follow Uniswap V2  |
 | Price mechanism       |  oracle + price impact   | oracle  + price impact  | 
 | LP share              | ERC20 token           | ERC20 token       |
@@ -68,7 +68,7 @@ Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_
 
 
 ## 3.1. BUY verification
- Pre-trade inventory $xP_X + yP_Y$. 
+- Pre-trade inventory $xP_X + yP_Y$. 
 - For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P_X + (y+dy)P_Y$.  
 
 Pool contract **verifies** the two condition:
@@ -97,7 +97,7 @@ BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1,
 3. Token X price fed by oracle $P=P_{X/Y}$ (i.e. quoted by Y). 
 4. Compute average trading price $Pt = P * (1 + R/2)$.
 5. Compute _pseudo amountIN_ $dy=dx * Pt$.
-6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x-dx)P_X + (y+dy)P_Y - P_X\frac{K * dx * dx}{2(x-dx)} \geq (x* P_X + yP_Y)$.
+6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x-dx)P_X + (y+dy)P_Y - P_X\frac{K * dx * dx}{2(x-dx)} \geq (xP_X + yP_Y)$.
 7. Add fee to _amountIN_, compute actual _amountIN_ $Dy = dy*(1+fee)$. => check trader's token balance to ensure the trader has sufficient amount of token X for swap.
 8. Swap  $Dy$ amountIN of token Y for  $dx$ amountOUT of token X.
 
@@ -109,7 +109,7 @@ BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1,
 3. Token Y price fed by oracle  $P=P_{Y/X}=\frac{1}{P_{X/Y}}$. (i.e. quoted by X). 
 4. Compute average trading price $P_t = P * (1 + R/2) = \frac{1}{P_{X/Y}} * (1 + R/2)$. 
 5. Compute _pseudo amountIN_ $dx=dy * P_t$.
-6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x+dx)P_X + (y-dy)P_Y - P_Y\frac{K * dy * dy}{2(y-dy)} \geq (x* P_X + yP_Y)$.
+6. **Verify** post-trade inventory vs pre-trade inventory (**without fee**) $(x+dx)P_X + (y-dy)P_Y - P_Y\frac{K * dy * dy}{2(y-dy)} \geq (xP_X + yP_Y)$.
 7. Add fee to _amountIN_, compute actual _amountIN_  $Dx = dx*(1+fee)$. => check trader's token balance to ensure the trader has sufficient amount of token X for swap.
 8. Swap  $Dx$ amountIN of token X for  $dy$ amountOUT of token Y.
 
@@ -128,13 +128,13 @@ Token price fed by oracle $P_X, P_Y$ (i.e. quoted by US dollar).
 ### 4.2.1. (B1-buy) 
 Traders enter **actual** _amountIN_ $Dy$ of token Y => find **actual** _amountOUT_ $Dx$ of token X.  
 1. Compute _pseudo_ amountIN $dy=Dy/(1+fee)$.
-2. Compute actual amountOUT $dx = \frac{xP_X+dyP_Y - \sqrt{(xP_X-dyP_Y)^2+2P_X * P_Y K* x* dy}}{p(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dx=\frac{xdyP_Y}{xP_X+dyP_Y}$. 
+2. Compute actual amountOUT $dx = \frac{xP_X+dyP_Y - \sqrt{(xP_X-dyP_Y)^2+2P_X P_Y * K x dy}}{P_X(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dx=\frac{xdyP_Y}{xP_X+dyP_Y}$. 
 3. Return to Steps (1 to 6) of Section 4.1.1 in Backward computation.  
 
 ### 4.2.2. (B1-sell) 
 Traders enter **actual** _amountIN_ $Dx$ of token X => find _amountOUT_ $Dy$ of token Y.  
 1. Compute _pseudo_ amountIN $dx=Dx/(1+fee)$.
-2. Compute actual amountOUT $dy = \frac{P_Xdx+yP_Y - \sqrt{(P_Xdx-yP_Y)^2+2P_XP_Y * K* y* dx}}{P_Y(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dy=\frac{p* y* dx}{p* dx+y}$.  
+2. Compute actual amountOUT $dy = \frac{P_Xdx+yP_Y - \sqrt{(P_Xdx-yP_Y)^2+2P_XP_Y * K y dx}}{P_Y(2-K)}$ if $K<2$. Otherwise, for $K=2$, we have $dy=\frac{ydxP_X}{dxP_X+yP_Y}$.  
 3. Return to Steps (1 to 6) of Section 4.1.2 in Backward computation.
 
 
@@ -164,15 +164,16 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Th
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
 -  Assume that before swap (pre-trade), the pool has token reserve $(x0, y0)$ with corresponding dollar price $P_X, P_Y$, and the pool USD-value $V0= x0 * P_X + y0 * P_Y$.
 - After swap (post-trade), the pool has token reserve $(x1, y1)$ with the same dollar price $P_X, P_Y$, and the new USD-value of the pool is $V1= x1 * P_X + y1 * P_Y$.
-- The protocol fee is $PF = (V1 - V0) * m$. 
+- The protocol fee is $PF = (V1 - V0) * m$. By token IN/OUT convention, we have $PF = (amountIN * P_{tokenIN} - amountOUT * P_{tokenOUT}) *m$. 
 - Mint an amount of new LP token by $newLP=E * \frac{PF}{V1}$ then transfer to the dev wallet (or update LP token balance for the dev wallet for later claim/withdraw). This should be compatible with  [adding new LP issue](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597) and equivalently to [LP computation](https://github.com/BrownFi/BrownAMM-dev/blob/main/compute-LP.md). 
 
-The dev may claim their revenue anytime using their LP token (balance). The price to compute the dev LP is the same as the fetched price for the swap.
+> The price to compute the dev LP is the same as the fetched price for the swap.
+> The dev may claim their revenue anytime using their LP token (balance). 
 
 
 # 6. Universial settings
 The following settings are universially applied for all BrownFi AMM's pools.  
 
-- **Kappa** (the parameter controlling liquidity concentration) is limited in the range &0.001 \leq K \leq 2$. The defaut is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
-- **Trading fee** is applied for _amountOUT only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$.
+- **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.001 \leq K \leq 2$. The defaut is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
+- **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$.
 - Protocol fee $m$ is a configurable param, where $0\leq m \leq 1$.
