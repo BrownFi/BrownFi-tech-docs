@@ -164,10 +164,10 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Th
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
 -  Assume that before swap (pre-trade), the pool has token reserve $(x0, y0)$ with corresponding dollar price $P_X, P_Y$, and the pool USD-value $V0= x0 * P_X + y0 * P_Y$.
 - After swap (post-trade), the pool has token reserve $(x1, y1)$ with the same dollar price $P_X, P_Y$, and the new USD-value of the pool is $V1= x1 * P_X + y1 * P_Y$.
-- The protocol fee is $PF = (V1 - V0) * m$. By token IN/OUT convention, we have $PF = (amountIN * P_{tokenIN} - amountOUT * P_{tokenOUT}) *m$. 
+- The protocol fee is $PF = (V1 - V0) * m$. By token IN/OUT convention, for convenient computation, we have $PF = (amountIN * P_{tokenIN} - amountOUT * P_{tokenOUT}) *m$. 
 - Mint an amount of new LP token by $newLP=E * \frac{PF}{V1}$ then transfer to the dev wallet (or update LP token balance for the dev wallet for later claim/withdraw). This should be compatible with  [adding new LP issue](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597) and equivalently to [LP computation](https://github.com/BrownFi/BrownAMM-dev/blob/main/compute-LP.md). 
 
-> The price to compute the dev LP is the same as the fetched price for the swap.
+> The price to compute the dev LP is the same as the fetched price for the swap.   
 > The dev may claim their revenue anytime using their LP token (balance). 
 
 
