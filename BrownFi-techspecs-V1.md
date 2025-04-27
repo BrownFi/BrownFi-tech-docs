@@ -1,4 +1,4 @@
-_This is a technical document, describing all technical specilizations of BrownFi AMM version 1 (current beta production). The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, universial settings_
+_This is a technical document, describing all technical specilizations of BrownFi AMM version 1 (current **Beta Production**). The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, universial settings_
 
 # 1. Math of BrownFi AMM
 [**BrownFi**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a pair (pool) of two tokens with liquidity reserve $(x, y)$ of token X and token Y, respectively. For an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
@@ -21,6 +21,7 @@ Create a new liquidity pool is similar to the design of Uniswap V2 model with so
 - Initiate arbitrary amounts of the token pair $(x, y)$.
 - Set price feed of the token pair.
 - Set liquidity concentration, Kappa parameter.
+
 Note that on BrownFi AMM, pair inventory is often imbalanced due to price movement, but fluctuating around 50-50 inventory equilibrium. See an example on BrawnFi AMM deployed on Berachain mainnet (pair Bera/Honey) https://berascan.com/address/0x603d6a4e61417283ec0096921d2bdf1b57f122a3 
 
 # 4. Add/remove liquidity
