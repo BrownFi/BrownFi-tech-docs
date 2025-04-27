@@ -33,9 +33,13 @@ The average trading price is the only thing a trader cares, defined by $\frac{\D
 
 ![image](https://github.com/user-attachments/assets/c030d4bc-d486-430b-be11-b424a96bc544)
 
+
 ## Slippage (Price impact) comparison
 - Easily see that Uniswap V2 causes greater slippage than all BrownFi pool (for $K<2$). Particularly, if $K=2$, then BrownFi and Uniswap V2 are equivalent.
 - Regarding three Uniswap V3 pools, each BrownFi pools (K3 & K4) has lower slippage on the left side of the intersecting point, greater on the right, respectively. Particularly, BrownFi $K_4=0.001$ is mostly equivalent to Uniswap V3 range $\pm1$%.
+- For price impact comparison, given the same TVL & zero fee, BrownFi offers quotes 10X (resp. 5X) better than UniV3 range ±1% upon order size less than 20% (resp. 50%) pool reserve. See [this sheet](https://docs.google.com/spreadsheets/d/17Hnh2PrqyVLPXGkGiI4tF8665GF9-HYmmD7YjLC05I4/edit?usp=sharing) for details.
+
+![image](https://github.com/user-attachments/assets/c35ff832-11fe-455b-b27c-57287b4dec47)
 
 Further on capital efficiency comparison, we have:
 
