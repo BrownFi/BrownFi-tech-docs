@@ -95,7 +95,7 @@ This flow is REGULAR on BrownFi AMM by math, and suggested. It always gives exac
 # 6. Universial settings
 The following settings are universially applied for all BrownFi AMM's pools.  
 
-- **Kappa** (the parameter controlling liquidity concentration) is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
+- **Kappa** (the parameter controlling liquidity concentration) is set to be $K=0.001$, thus liquidity concentration is 200X Uniswap V2 model and similar to Uniswap V3 range $\pm1$%.  
 - **Trading fee** is applied for _amountOUT_, so effecting amountIN as well. With the current $fee = 15$ bps, i.e. 0.15% applied for amountOUT, it roughly effects 0.15% on amountIN, hence the total fee will be 0.3% (counting the both sides).
 - **Protocol fee** is currently zero, i.e. NO fee split for the developer.
 
