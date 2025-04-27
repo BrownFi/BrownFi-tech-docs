@@ -1,4 +1,4 @@
-_This is a technical document, describing all technical specilizations of BrownFi AMM version 1. The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, universial settings_
+_This is a technical document, describing all technical specilizations of BrownFi AMM version 1 (current beta production). The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, universial settings_
 
 # 1. Math of BrownFi AMM
 [**BrownFi**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a pair (pool) of two tokens with liquidity reserve $(x, y)$ of token X and token Y, respectively. For an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
@@ -21,8 +21,7 @@ Create a new liquidity pool is similar to the design of Uniswap V2 model with so
 - Initiate arbitrary amounts of the token pair $(x, y)$.
 - Set price feed of the token pair.
 - Set liquidity concentration, Kappa parameter.
-- Set the base and the quote tokens. 
-See an example on BrawnFi AMM deployed on Metis mainnet https://andromeda-explorer.metis.io/address/0x36D65d716093344B05c961D65b286fa13dde6f5B?tab=write_contract
+Note that on BrownFi AMM, pair inventory is often imbalanced due to price movement, but fluctuating around 50-50 inventory equilibrium. See an example on BrawnFi AMM deployed on Berachain mainnet (pair Bera/Honey) https://berascan.com/address/0x603d6a4e61417283ec0096921d2bdf1b57f122a3 
 
 # 4. Add/remove liquidity
 Add/remove liquidity on BrownFi AMM's pools follows the convention of Uniswap V2 model. Liquidity position is fungible and based on ERC20 token standard. Add/remove liquidity must be directly proportional to the existing reserve ratio of the pool. 
@@ -30,7 +29,7 @@ Add/remove liquidity on BrownFi AMM's pools follows the convention of Uniswap V2
 ## 4.1. Add LP
 - The current reserves are $(x,y)$, and the existing LP tokens are $E=totalLPtokens, E>0$.  
 - Assume that an LPer enters an amount $x'$ of token X, then the new reserve will become $x \mapsto x + x'$, the adding ratio is $a= \frac{x'}{x}.$ Thus, $y' = a \times y = \frac{x'}{x} \times y$ is the corresponding amount of token Y that the LPer must add along with the amount $x'$ of token X. The new pool reserve will be $(x + x', y + y')$, proportionally with the previous reserve (i.e. $\frac{x}{y}=\frac{x + x'}{y + y'}=\frac{x'}{y'}$).
-- The pool share of the LP is $b=\frac{a}{1+a}=\frac{x'}{x+x'}$ whichever easier, hence minting (issuing) an amount of LP tokens $\frac{b*E}{1-b}=E\times \frac{x'}{x}$ whichever easier.
+- The pool share of the LP is $b=\frac{a}{1+a}=\frac{x'}{x+x'}$ whichever easier, hence minting an amount of LP tokens $\frac{b*E}{1-b}=E\times \frac{x'}{x}$ whichever easier.
 
 ## 4.2. Remove LP 
 An LPer wants to remove his liquidity provision, i.e. redeeming/burning his LP tokens for the pairing assets.  
@@ -54,7 +53,7 @@ An LPer wants to remove his liquidity provision, i.e. redeeming/burning his LP t
 6. Compute _amountIN_ $dy=dx * p_t$, this is also the **actual** _amountIN_ $Dy = dy$. 
 7. Swap  $Dy$ amountIN of token Y for  $Dx$ amountOUT of token X.
 8. The post-trade pool state is $(xt=x - Dx, yt=y + Dy).$
-9. Pool verification $(x-dx)P + (y+dy) \geq (xP + y) + \frac{P * K * dx * dx}{2(x-dx)}$
+9. Pool verification $(x-dx)P + (y+dy) - \frac{P * K * dx * dx}{2(x-dx)} \geq (xP + y)$
  
 ### 5.1.2. If (**B2-sell**): traders enter expecting _amountOUT_ $Dy$ of token Y.  
 1. Adding fee $dy=Dy *(1+fee)$. This is the _pseudo amountOUT_ used to compute price impact, trading price below.
@@ -65,7 +64,7 @@ An LPer wants to remove his liquidity provision, i.e. redeeming/burning his LP t
 6. Compute _amountIN_ $dx=dy * p_t$, this is also the **actual** _amountIN_ $Dx = dx$. 
 7. Swap  $Dx$ amountIN of token X for  $Dy$ amountOUT of token Y.
 8. The post-trade pool state is updated as $(xt=x + Dx, yt=y - Dy)$.
-9. Pool verification $(x+dx)P + (y-dy) \geq (xP + y) + \frac{K * dy * dy}{2(y-dy)}$.
+9. Pool verification $(x+dx)P + (y-dy) - \frac{K * dy * dy}{2(y-dy)} \geq (xP + y) $.
 
 
 ## 5.2) Forward computation (get amountOUT)
@@ -97,7 +96,7 @@ This flow is REGULAR on BrownFi AMM by math, and suggested. It always gives exac
 The following settings are universially applied for all BrownFi AMM's pools.  
 
 - **Kappa** (the parameter controlling liquidity concentration) is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
-- **Trading fee** is applied for _amountOUT only_, and $fee = 0.0025$, i.e. 0.25%.
+- **Trading fee** is applied for _amountOUT_, so effecting amountIN as well. With the current $fee = 15$ bps, i.e. 0.15% applied for amountOUT, it roughly effects 0.15% on amountIN, hence the total fee will be 0.3% (counting the both sides).
 - **Protocol fee** is currently zero, i.e. NO fee split for the developer.
 
 
