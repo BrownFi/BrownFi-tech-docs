@@ -60,7 +60,7 @@ When someone initiates a pool, we must pass the ZERO state. Assume the we initia
 
 # 3. Pool state verification
 
-Per swap, the pool must be guaranteed that post-trade inventory (**without fee**) is greater or equal pre-trade inventory plus premium (price impact). The verification method to ensure a safe accounting for LP regardless computing process (with rounding and routing).   
+Per swap, the pool must be guaranteed that post-trade inventory (**without fee**) is greater or equal pre-trade inventory plus premium (price impact). The verification method to ensure a safe accounting for LP regardless computing process (with rounding and routing), meaning LP always get trading fee and price impact premium as intented.   
 
 **NOTE**: Trading fee is applied on amountIN only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
 
@@ -178,4 +178,4 @@ The following settings are applied for all BrownFi AMM's pools by default but ca
 - **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
 - **Protocol fee** $m$ is a configurable param, where $0\leq m \leq 1$. Protocol fee receipient is set by _feeTo_ function on Factory contract
 
-The protocol admin right is transferred by _feeToSetter_ function on Factory contract. On each pair contract, the admin can configure **Kappa** (setK), **trading fee** (setFee), and **protocol fee** (setProtocolFee).
+The **protocol admin right** is transferred by _feeToSetter_ function on Factory contract. On each pair contract, the admin can configure _Kappa_ (setK), _trading fee_ (setFee), and _protocol fee_ (setProtocolFee).
