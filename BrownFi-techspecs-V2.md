@@ -150,7 +150,6 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Th
 
 - Trading fee is a configurable param, defined by a percentage of order size. More precisely, trading fee equals $fee * amountIN$, current $fee =0.3$%. 
 - Protocol fee equals $m * revenue$, where $0\leq m \leq 1$ is a configurable param.
-- The protocol fee is splitted per swap and sent to a pre-defined address.  
 - By default, protocol fee is $m=0.1$ (i.e. 10% of LP revenue).
 
 **Implement fee split at the core contract**, so dev earns fee for all routers (including aggregators).
