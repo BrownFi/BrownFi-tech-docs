@@ -26,7 +26,7 @@ The Kappa ($K$) is limited by the range $0.001 \leq K \leq 2$. Smaller Kappa, gr
 
 # 2. Liquidity provision
 ## 2.1. Create new pools
-Create a new liquidity pool is similar to the design of Uniswap V2 model with some additional changes to adapt with oracle-based design of BrownFi AMM.
+Create a new liquidity pool is permissionless similarly to the design of Uniswap V2 model with some additional changes to adapt with oracle-based design of BrownFi AMM.
 
 - Initiate arbitrary amounts of the token pair $(x, y)$.
 - Set oracle price feed of the token pair.
@@ -177,4 +177,6 @@ The following settings are applied for all BrownFi AMM's pools by default but ca
 - **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
 - **Protocol fee** $m$ (default $m=0.1$) is a configurable param, where $0\leq m \leq 1$. Protocol fee receipient is set by _feeTo_ function on Factory contract.
 
-The **protocol admin right** is transferred by _feeToSetter_ function on Factory contract. On each pair contract, the admin can configure _Kappa_ (setK), _trading fee_ (setFee), and _protocol fee_ (setProtocolFee).
+The **protocol admin right** is transferred by _feeToSetter_ function on Factory contract. On each pair contract, the admin can configure _Kappa_ (setK), _trading fee_ (setFee), and _protocol fee_ (setProtocolFee).  
+
+Pool creation is permissionless with the risk of fake oracle feed. This can be done by checking the pair and oracle IDs on frontends or routers. 
