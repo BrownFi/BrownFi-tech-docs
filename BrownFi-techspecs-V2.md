@@ -8,11 +8,13 @@ BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit rep
 | Codebase               |   [Uniswap V2](https://github.com/Uniswap/v2-core)          |     [Uniswap V2](https://github.com/Uniswap/v2-core)       |                   
 | Protocol design       |   follow Uniswap V2   |   follow Uniswap V2  |
 | Price mechanism       |  oracle + price impact   | oracle  + price impact  | 
+| Pool creation         | Permissioned            |  permissionless   |
 | LP share              | ERC20 token           | ERC20 token       |
 | Add LP                | by token ratio     | 50-50 by dollar-value      |
 | Remove LP             | by token ratio     | by token ratio        |
 | Trading fee         | applied on amountOUT      | applied on amountIN   | 
 | Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
+| Order size         | no limit     | limited $\leq 90$% at pair contract  | 
 
 
 # 1. Math of BrownFi AMM
@@ -22,7 +24,7 @@ BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit rep
  - The term $\frac{R}{2}$ is price impact, where $R=\frac{K * \Delta x}{x-\Delta x}$;
  - Kappa ($K$) is an adjustable and configurable parameter, controlling liquidity concentration on BrownFi's pools.
 
-The Kappa ($K$) is limited by the range $0.001 \leq K \leq 2$. Smaller Kappa, greater liquidity concentration. 
+The Kappa ($K$) is limited by the range $0.0001 \leq K \leq 2$. Smaller Kappa, greater liquidity concentration. 
 
 # 2. Liquidity provision
 ## 2.1. Create new pools
@@ -30,7 +32,7 @@ Create a new liquidity pool is permissionless similarly to the design of Uniswap
 
 - Initiate arbitrary amounts of the token pair $(x, y)$.
 - Set oracle price feed of the token pair.
-- Set liquidity concentration, Kappa parameter, requiring $0.001 \leq K \leq 2$.
+- Set liquidity concentration, Kappa parameter, requiring limits $0.0001 \leq K \leq 2$.
   
 See an example on BrawnFi AMM deployed on Metis mainnet https://andromeda-explorer.metis.io/address/0x36D65d716093344B05c961D65b286fa13dde6f5B?tab=write_contract
 
@@ -173,7 +175,7 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Th
 # 6. Protocol settings/configurations
 The following settings are applied for all BrownFi AMM's pools by default but can be changed by the protocol admin.  
 
-- **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.001 \leq K \leq 2$. The defaut is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
+- **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.0001 \leq K \leq 2$. The defaut is set to be $K=0.001$, thus liquidity concentration is similar to Uniswap V3 range $\pm1$%.  
 - **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
 - **Protocol fee** $m$ (default $m=0.1$) is a configurable param, where $0\leq m \leq 1$. Protocol fee receipient is set by _feeTo_ function on Factory contract.
 
