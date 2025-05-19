@@ -14,7 +14,7 @@ BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit rep
 | Remove LP             | by token ratio     | by token ratio        |
 | Trading fee         | applied on amountOUT      | applied on amountIN   | 
 | Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
-| Order size         | no limit     | limited $\leq 90$% at pair contract  | 
+| Order size         | no limit     | $\leq 90$% reserve limited by pair contract  | 
 
 
 # 1. Math of BrownFi AMM
@@ -143,8 +143,7 @@ Traders enter **actual** _amountIN_ $Dx$ of token X => find _amountOUT_ $Dy$ of 
 ## 4.3. Computing flow diagram
 
 This flow is REGULAR on BrownFi AMM by math, and suggested. 
-![image](https://github.com/user-attachments/assets/e4fdb0f2-9018-4182-9d09-9bfaf93baca7)
-
+![image](https://github.com/user-attachments/assets/0e211da3-2541-4696-8858-0279988c1932)
 
 # 5. Protocol fee (splitted for the developer)
 
