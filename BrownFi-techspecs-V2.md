@@ -87,7 +87,7 @@ Pool contract **verifies** the two condition:
 
 ## 3.3. Language of amount-IN/OUT
 Without caring on buy/sell, we can re-state the inventory verification formula in the language of unified amountIN and amountOUT as followed:  
-$$(Reserve_{OUT} - amount_{OUT})*Price_{OUT} + (Reserve_{IN} + amount_{IN})*Price_{IN} - Price_{OUT} * \frac{K * (amount_{OUT})^2}{2(Reserve_{OUT} - amount_{OUT})} \geq Reserve_{OUT} * Price_{OUT} - Reserve_{IN} * Price_{IN}$$
+$$(Reserve_{OUT} - amount_{OUT})*Price_{OUT} + (Reserve_{IN} + amount_{IN})*Price_{IN} - Price_{OUT} * \frac{K * (amount_{OUT})^2}{2(Reserve_{OUT} - amount_{OUT})} \geq Reserve_{OUT} * Price_{OUT} + Reserve_{IN} * Price_{IN}$$
 
 # 4. Swap formulas
 BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1, except trading fee is **applied** for **amountOUT** (instead of _amountIN_ in V1).
