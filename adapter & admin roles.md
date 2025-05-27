@@ -6,7 +6,7 @@ BrownFi V2 introduces a new design for oracle price adapter: 2 price sources and
 
 The adapter pulls or receives asset prices from oracle, then feed to pair contracts (liquidity pools) for swaps and/or adding LP. By default, at least one oracle price source **MUST** be set.   
 
-Optionally, the second oracle can be added by the _OracleSetter_. Then, the adapter will compute the price mean, then feed to pair contracts. The procedure is:  
+Optionally, the second oracle can be enabled and added by the _OracleSetter_. Then, the adapter will compute the price mean, then feed to pair contracts. The procedure is:  
 - Pull _oraclePrice1_ and _oraclePrice2_
 - Verify that two sources have the same decimals.
 - Verify that variance of the two price sources doesn't exceed 1%, i.e. $variance = \frac{\|oraclePrice1 - oraclePrice2\|}{oraclePrice1 + oraclePrice2} \leq 1/200=0.005$. Otherwise, invalid price => revert TX. 
@@ -17,12 +17,16 @@ We define four admind (setter) roles associated with certain param settings: ora
 
 **OracleSetter**:
 - setDecimalShift
-- setPricefeed
-- setQTI
+- setPricefeed1
+- setQTI1
+- setPricefeed2
+- setQTI2
+- setPriceVariance
 
 **TuningSetter**:
 - setFee: set transaction fee
 - setKappa: set parameter which controls liquidity concentration
+- setSkewness: enable/disable skewness params
 
 **BizSetter**:
 - setFeeto: set receiver of protocol fee (receiving diluted LP tokens per swap) which belongs to the developer
@@ -37,6 +41,7 @@ To prevent acidental and sudden change in the protocol, we apply timelock regard
 - All settings (on oracle price adapter, setFee, setKappa, setFeeto, setProtocolfee) require 1 hours to be effective.
 - Only "_Pause the entire protocol_" is **immediately effective**. 
 
-![image](https://github.com/user-attachments/assets/aeac3395-a072-4cad-b808-d12e44d36783)
+![image](https://github.com/user-attachments/assets/e5fe665c-316c-453a-967d-b98dd9e655a7)
+
 
 
