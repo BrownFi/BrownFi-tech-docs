@@ -2,6 +2,8 @@
 To ensure highest security level for BrownFi AMM, we design an oracle price adapter to fetch price for all pools, and separate admin (setter) roles regarding various settings in the BrownFi protocol. Read the related BrownFi V2 tech-specifications [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/BrownFi-techspecs-V2.md).
 
 ## Oracle price adapter
+BrownFi V2 introduces a new design for oracle price adapter: 2 price sources and skewness.  
+
 The adapter pulls or receives asset prices from oracle, then feed to pair contracts (liquidity pools) for swaps and/or adding LP. By default, at least one oracle price source **MUST** be set.   
 
 Optionally, the second oracle can be added by the _OracleSetter_. Then, the adapter will compute the price mean, then feed to pair contracts. The procedure is:  
