@@ -6,23 +6,25 @@ BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit rep
 | Essentials             | BrownFi V1 | BrownFi V2 | 
 | :----------------      | ------:         | ----:            | 
 | Codebase               |   [Uniswap V2](https://github.com/Uniswap/v2-core)          |     [Uniswap V2](https://github.com/Uniswap/v2-core)       |                   
-| Protocol design       |   follow Uniswap V2   |   follow Uniswap V2  |
+| Protocol design       |  follow Uniswap V2   |   follow Uniswap V2  |
 | Price mechanism       |  oracle + price impact   | oracle  + price impact  | 
 | Pool creation         | Permissioned            |  permissionless   |
 | LP share              | ERC20 token           | ERC20 token       |
 | Add LP                | by token ratio     | 50-50 by dollar-value      |
 | Remove LP             | by token ratio     | by token ratio        |
-| Trading fee         | applied on amountOUT      | applied on amountIN   | 
+| Trading fee          | applied on amountOUT      | applied on amountIN   | 
 | Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
-| Order size         | no limit     | $\leq 90$% reserve limited by pair contract  | 
-|Oracle adapter        | single source       | 
+| Order size           | no limit            | $\leq 90$% reserve limited by pair contract  | 
+| Oracle adapter        | single source       | 2 sources (1 MUST, 1 optional)  |
+| Oracle adapter        | pure oracle         | plus pool skewness   |
+| Admin role           | one for all         | separate 4 roles     |
 
 Read the design of oracle price adapter and admin roles [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
 
 # 1. Math of BrownFi AMM
 [**BrownFi**](https://mirror.xyz/0x64f4Fbd29b0AE2C8e18E7940CF823df5CB639bBa/5lSUhDUCCSZTxznxfkClDvLkwE3wr_swFCH_mT9fXLI) introduced a novel oracle-based AMM model. Given a pair (pool) of two tokens with liquidity reserve $(x, y)$ of token X and token Y, respectively. For an amount $\Delta x$ of token X to be swapped out, trader must pay $\Delta y$ of token Y in exchange, simply defined by:
 
- - $\Delta y = P(1+\frac{R}{2})\Delta x$, where $P=P_{X/Y}$ is the global price of X, quoted by Y, fed by oracle;
+ - $\Delta y = P(1+\frac{R}{2})\Delta x$, where $P=P_{X/Y}$ is the global price of X, quoted by Y, fed by oracle adapter;
  - The term $\frac{R}{2}$ is price impact, where $R=\frac{K * \Delta x}{x-\Delta x}$;
  - Kappa ($K$) is an adjustable and configurable parameter, controlling liquidity concentration on BrownFi's pools.
 
@@ -49,7 +51,7 @@ causing higher price impact on the less side and smaller price impact on the lar
 We want to  extend the framework to reduce the cons, improving LP UX. This can be done by converting assets to **USD value** (or a pre-defined quote asset), then computing LP share. Price-feed is required to compute dollar value of the pool and new adding LP.  
 
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
--  Assume that at a specific time $t$, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$, and the pool value $V= x * P_X + y * P_Y$.
+-  Assume that at a specific time $t$, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$ fed by oracle adapter without sknewness factor, and the pool value $V= x * P_X + y * P_Y$.
 -  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P_X + y' * P_Y$. His liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or **$newLP=E\times \frac{B}{V}$.** 
 ### Trick at LP initiation
 When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar price $P_X, P_Y$, and the initiating value $B= x * P_X + y * P_Y$. Then we do:
@@ -178,12 +180,13 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Th
 
 
 # 6. Protocol settings/configurations
-The following settings are applied for all BrownFi AMM's pools by default but can be changed by the protocol admin.  
+The following settings are applied for all BrownFi AMM's pools by default but can be changed by the protocol admins.  Read the admin roles and their corresponding rights [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
 
 - **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.0001 \leq K \leq 2$. The defaut is set to be $K=0.01$, thus liquidity concentration (or liquid depth) is similar to Uniswap V3 range $\pm2$%.  
 - **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
 - **Protocol fee** $m$ (default $m=0.1$) is a configurable param, where $0\leq m \leq 1$. Protocol fee receipient is set by _feeTo_ function on Factory contract.
 
-The **protocol admin right** is transferred by _feeToSetter_ function on Factory contract. On each pair contract, the admin can configure _Kappa_ (setK), _trading fee_ (setFee), and _protocol fee_ (setProtocolFee).  
+After deploying the protocol, the deployer MUST transfer the admin roles to the predefined wallets / public addresses.  
 
-Pool creation is permissionless with the risk of fake oracle feed. This can be done by checking the pair and oracle IDs on frontends or routers. 
+Pool creation is permissionless with the risk of fake oracle feed. This can be done by checking the pair and oracle IDs on frontends or routers, and some additional safeguards are designed [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
+
