@@ -1,12 +1,10 @@
 _This is a technical document, describing all technical specilizations of BrownFi AMM version 2 (under development). The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, fee & other protocol settings_  
 BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit report](https://github.com/verichains/public-audit-reports/blob/main/Verichains%20Public%20Audit%20Report%20-%20BrownFi%20AMM%20Smartcontracts%20-%20v1.0.pdf)
 
-**We compare the two versions.**
+**We compare the two versions.** While using the same Codebase of [Uniswap V2](https://github.com/Uniswap/v2-core) and its design, the two versions of BrownFi AMM protocol have some diffentiations.         
 
 | Essentials             | BrownFi V1 | BrownFi V2 | 
 | :----------------      | ------:         | ----:            | 
-| Codebase               |   [Uniswap V2](https://github.com/Uniswap/v2-core)          |     [Uniswap V2](https://github.com/Uniswap/v2-core)       |                   
-| Protocol design       |  follow Uniswap V2   |   follow Uniswap V2  |
 | Price mechanism       |  oracle + price impact   | oracle  + price impact  | 
 | Pool creation         | Permissioned            |  permissionless   |
 | LP share              | ERC20 token           | ERC20 token       |
@@ -16,7 +14,6 @@ BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit rep
 | Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
 | Order size           | no limit            | $\leq 90$% reserve limited by pair contract  | 
 | Oracle adapter        | single source       | 2 sources (1 MUST, 1 optional)  |
-| Oracle adapter        | pure oracle         | plus pool skewness   |
 | Admin role           | one for all         | separate 4 roles     |
 
 Read the design of oracle price adapter and admin roles [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
