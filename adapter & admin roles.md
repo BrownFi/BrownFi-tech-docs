@@ -9,7 +9,7 @@ The adapter pulls or receives asset prices from oracle, then feed to pair contra
 Optionally, the second oracle can be enabled and added by the _OracleSetter_. Then, the adapter will compute the price mean, then feed to pair contracts. The procedure is:  
 - Pull _oraclePrice1_ and _oraclePrice2_
 - Verify that two sources have the same decimals.
-- Verify that variance of the two price sources doesn't exceed 1%, i.e. $variance = \frac{\|oraclePrice1 - oraclePrice2\|}{oraclePrice1 + oraclePrice2} \leq 1/200=0.005$. Otherwise, invalid price => revert TX. 
+- Verify that variance of the two price sources doesn't exceed 0.5%, i.e. $variance = \frac{\|oraclePrice1 - oraclePrice2\|}{oraclePrice1 + oraclePrice2} \leq 1/200=0.005$. Otherwise, invalid price => revert TX. 
 - Compute the mean (average) price $meanPrice = (oraclePrice1 + oraclePrice2)/2$.
 
 ## 2. Admin roles
