@@ -152,9 +152,9 @@ This flow is REGULAR on BrownFi AMM by math, and suggested.
 
 # 5. Protocol fee (splitted for the developer)
 
-Per swap, LPers earn premium fee (derived from price impact) and trading fee. The LP revenue (= premium + trading fee) is partially splitted into protocol fee for the protocol developer.   
+Per swap, LPers earn premium fee (derived from price impact) and trading fee. However, only trading fee is partially splitted into protocol fee for the protocol developer.   
 
-- Trading fee is a configurable param, defined by a percentage of order size. More precisely, trading fee equals $fee * amountIN$, current $fee =0.3$%. 
+- Trading fee is a configurable param, defined by a percentage of actual amountIN. More precisely, trading fee equals $fee * amountIN$, current $fee =0.3$%. 
 - Protocol fee equals $m * revenue$, where $0\leq m \leq 1$ is a configurable param.
 - By default, protocol fee is $m=0.1$ (i.e. 10% of LP revenue).
 
@@ -162,18 +162,16 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Th
 
 **Requirement**: dollar-valued LP
 
-**Solution**: mint LP token for dev per swap according to the amount of protocol fee. 
+**Solution**: mint LP token for dev per swap according to the dollar-amount of protocol fee. 
 
-## Computing method
+**Computating protocol fee**
 
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
--  Assume that before swap (pre-trade), the pool has token reserve $(x0, y0)$ with corresponding dollar price $P_X, P_Y$, and the pool USD-value $V0= x0 * P_X + y0 * P_Y$.
-- After swap (post-trade), the pool has token reserve $(x1, y1)$ with the same dollar price $P_X, P_Y$, and the new USD-value of the pool is $V1= x1 * P_X + y1 * P_Y$.
-- The protocol fee is $PF = (V1 - V0) * m$. By token IN/OUT convention, for convenient computation, we have $PF = (amountIN * P_{tokenIN} - amountOUT * P_{tokenOUT}) *m$. 
-- Mint an amount of new LP token by $newLP=E * \frac{PF}{V1}$ then transfer to the dev wallet (or update LP token balance for the dev wallet for later claim/withdraw). This should be compatible with  [adding new LP issue](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597) and equivalently to [LP computation](https://github.com/BrownFi/BrownAMM-dev/blob/main/compute-LP.md). 
+-  Assume that the swap is given by an actual amountIN whose pseudo amountIN (without trading fee) is $pseudoAmountIN = \frac{actualAmountIN}{1+fee}$. Thus, the trading fee amount is $actualAmountIN - \frac{actualAmountIN}{1+fee} = \frac{actualAmountIN}{1+fee}* fee$.
+- Given the oracle price of token-IN is $P_{tokenIN}$, we compute $protocolFee = \frac{actualAmountIN}{1+fee}* fee * m * P_{tokenIN}$ in dollar value.
+- Mint an amount of new LP token by $newLP=E * \frac{protocolFee}{PoolValue_{posttrade}} = E * \frac{protocolFee}{x_1P_X + y_1P_Y}$ then transfer to the dev wallet (_FeeTo_ setting). This should be compatible with  [adding new LP issue](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597) and equivalently to [LP computation](https://github.com/BrownFi/BrownAMM-dev/blob/main/compute-LP.md). 
 
 > The price to compute the dev LP is the same as the fetched price for the swap.   
-> The dev may claim their revenue anytime using their LP token (balance). 
 
 
 # 6. Protocol settings/configurations
