@@ -12,7 +12,7 @@ BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit rep
 | Remove LP             | by token ratio     | by token ratio        |
 | Trading fee          | applied on amountOUT      | applied on amountIN   | 
 | Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
-| Order size           | no limit            | $\leq 90$% reserve limited by pair contract  | 
+| Order size           | no limit            | $\leq 80$% reserve limited by pair contract  | 
 | Oracle adapter        | single source       | 2 sources (1 MUST, 1 optional)  |
 | Admin role           | one for all         | separate 4 roles     |
 
@@ -75,7 +75,7 @@ Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_
 - For, actual amountOUT $dx$ and pseudo amountIN $dy$ (**without fee**), we compute post-trade inventory $(x-dx)P_X + (y+dy)P_Y$.  
 
 Pool contract **verifies** the two condition:
-- $10 * dx \leq 9 * x$
+- $10 * dx \leq 8 * x$
 - MUST hold $(x-dx)P_X + (y+dy)P_Y - P_X\frac{K * dx * dx}{2(x-dx)} \geq (xP_X + yP_Y)$.
 
 ## 3.2. SELL verification
@@ -83,7 +83,7 @@ Pool contract **verifies** the two condition:
 - For, pseudo amountIN $dx$ (**without fee**) and actual amountOUT $dy$, we compute post-trade inventory $(x+dx)P_X + (y-dy)P_Y$.  
 
 Pool contract **verifies** the two condition:
-- $10 * dy \leq 9 * y$
+- $10 * dy \leq 8 * y$
 - MUST hold $(x+dx)P_X + (y-dy)P_Y  - P_Y\frac{K * dy * dy}{2(y-dy)} \geq (xP_X + yP_Y)$.
 
 ## 3.3. Language of amount-IN/OUT
@@ -99,7 +99,7 @@ BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1,
 > - (**B2**) take OUT $dy$ amount of token Y => calculate _put IN_ amount $dx$ of token X.
 
 ### 4.1.1. If (**B1**): enter/give _amountOUT_ $dx$ of token X. 
-1. CHECK $10 * dx \leq 9 * x$, otherwise exceed limit (failed).
+1. CHECK $10 * dx \leq 8 * x$, otherwise exceed limit (failed).
 2. Compute price impact $R=K*dx/(x-dx)$
 3. Token X price fed by oracle $P=P_{X/Y}$ (i.e. quoted by Y). 
 4. Compute average trading price $Pt = P * (1 + R/2)$.
@@ -111,7 +111,7 @@ BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1,
 > The post-trade pool state is $(xt=x - dx, yt=y + Dy).$   
 
 ### 4.1.2. If (**B2-sell**): traders enter expecting _amountOUT_ $dy$ of token Y.  
-1. CHECK $10 * dy \leq 9 * y$, otherwise exceed limit (failed).
+1. CHECK $10 * dy \leq 8 * y$, otherwise exceed limit (failed).
 2. Compute price impact $R=\frac{K* dy}{(y-dy)}$. 
 3. Token Y price fed by oracle  $P=P_{Y/X}=\frac{1}{P_{X/Y}}$. (i.e. quoted by X). 
 4. Compute average trading price $P_t = P * (1 + R/2) = \frac{1}{P_{X/Y}} * (1 + R/2)$. 
