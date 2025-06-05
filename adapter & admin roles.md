@@ -6,7 +6,7 @@ BrownFi V2 introduces a new design for oracle price adapter: 2 price sources. Th
 
 The adapter pulls or receives token prices from oracles, then feeds to pair contracts (liquidity pools) for swaps and/or adding LP. By default, at least one oracle price source **MUST** be set.   
 
-Optionally, the second oracle can be enabled and added by the _OracleSetter_. Then, the adapter will compute the price mean, then feed to pair contracts. The procedure is:  
+Optionally, the second oracle (_implement later_) can be enabled and added by the _OracleSetter_. Then, the adapter will compute the price mean, then feed to pair contracts. The procedure is:  
 - Pull _oraclePrice1_ and _oraclePrice2_
 - Verify that two sources have the same decimals.
 - Verify that variance of the two price sources doesn't exceed 0.5%, i.e. $variance = \frac{\|oraclePrice1 - oraclePrice2\|}{oraclePrice1 + oraclePrice2} \leq 1/200=0.005$. Otherwise, invalid price => revert TX. 
