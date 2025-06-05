@@ -33,6 +33,7 @@ We define three admind (setter) roles associated with certain param settings: or
 To prevent acidental and sudden change in the protocol, we apply timelock regarding setting change until effectiveness, except protocol pausing.  
 - All admin role changes require a timelock = 24h to be effective.
 - All settings (on OracleSetter, on BizSetter) require a timelock of 4 hours to be effective.
+- In the mean time of waiting for the end of timelock, the protocol is still active with the old settings.  
 - Only "_Pause the entire protocol_" is **immediately effective**. 
 
 ![image](https://github.com/user-attachments/assets/f9ee760a-44cc-4d84-91d4-2da0f70eabec)
