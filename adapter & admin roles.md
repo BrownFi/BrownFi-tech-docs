@@ -43,7 +43,7 @@ To prevent acidental and sudden change in the protocol, we apply timelock regard
 - Test role separation: 1 role 1 separate admin address which MUST-NOT overlap each other. That means BizSetter admin cannot set the param _SetOracleof_ of the OracleSetter role.
 - Test the immediate pause. Fater that, no call, no tx, no state transition are allowed on all pools of BrownFi AMM.
 - Test other settings in 3-minute timelock
-- Test overlapping per setting before effectiveness: for example, submit 1st TX to change Kappa, while waiting to be effective, another TX is submitted to change Kappa. The protocol should care the latest TX.  
+- Test overlapping per setting before effectiveness: for example, submit 1st TX to change Kappa, while waiting to be effective, another TX is submitted to change Kappa. The protocol should care the latest TX. In the mean time, the protocol is still active with the old settings.  
 
 
 
