@@ -15,19 +15,19 @@ Optionally, the second oracle can be enabled and added by the _OracleSetter_. Th
 ## 2. Admin roles
 We define three admind (setter) roles associated with certain param settings: oracle price setter (_OracleSetter_), Business Setter (BizSetter) and protocol suppervisor (_Pauser_). The 3 roles are independent. After deployment, the deployer must transfer the following roles to appropriated new admin addresses. 
 
-**OracleSetter**:
+**OracleSetter** acts on a specific pool. Two pools may have two separated Oracle Setters who are responsible for the 3 following settings: 
 - _SetPriceOracle_: set adapter contract address
 - _SetOracleof_: set price feedID
 - _SetMinPriceAge_: set the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period)
 
-**BizSetter**:
+**BizSetter** acts on a specific pool. Two pools may have two separated Bussiness Setters who are responsible for the 4 following settings: 
 - setFee: set transaction fee
 - setKappa: set parameter which controls liquidity concentration
 - setFeeto: set receiver of protocol fee (receiving diluted LP tokens per swap) which belongs to the developer
 - setProtocolfee: set the share percentage of trading fee which will belong to the developer
 
-**Pauser**: 
-- Pause the entire protocol
+**Pauser** acts on all pools (i.e. the entire protocol). 
+- Pause the entire protocol in case of attacks or emergent vulnerabilities. 
 
 ## 3. Timelock to effective setting
 To prevent acidental and sudden change in the protocol, we apply timelock regarding setting change until effectiveness, except protocol pausing.  
@@ -35,12 +35,13 @@ To prevent acidental and sudden change in the protocol, we apply timelock regard
 - All settings (on OracleSetter, on BizSetter) require a timelock of 4 hours to be effective.
 - Only "_Pause the entire protocol_" is **immediately effective**. 
 
-![image](https://github.com/user-attachments/assets/e5fe665c-316c-453a-967d-b98dd9e655a7)
+![image](https://github.com/user-attachments/assets/f9ee760a-44cc-4d84-91d4-2da0f70eabec)
+
 
 ## Notes for unitests
 - Test changes of 3 admin roles in 5-minute timelock
 - Test role separation: 1 role 1 separate admin address which MUST-NOT overlap each other. That means BizSetter admin cannot set the param _SetOracleof_ of the OracleSetter role.
-- Test the immediate pause
+- Test the immediate pause. Fater that, no call, no tx, no state transition are allowed on all pools of BrownFi AMM.
 - Test other settings in 3-minute timelock
 - Test overlapping per setting before effectiveness: for example, submit 1st TX to change Kappa, while waiting to be effective, another TX is submitted to change Kappa. The protocol should care the latest TX.  
 
