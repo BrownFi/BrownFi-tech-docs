@@ -21,13 +21,13 @@ We define three admind (setter) roles associated with certain param settings: or
 - _SetMinPriceAge_: set the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period)
 
 **BizSetter** acts on a specific pool. Two pools may have two separated Bussiness Setters who are responsible for the 4 following settings: 
-- setFee: set transaction fee
-- setKappa: set parameter which controls liquidity concentration
-- setFeeto: set receiver of protocol fee (receiving diluted LP tokens per swap) which belongs to the developer
-- setProtocolfee: set the share percentage of trading fee which will belong to the developer
+- _setFee_: set transaction fee
+- _setKappa_: set parameter which controls liquidity concentration
+- _setFeeto_: set receiver of protocol fee (receiving diluted LP tokens per swap) which belongs to the developer
+- _setProtocolfee_: set the share percentage of trading fee which will belong to the developer
 
 **Pauser** acts on all pools (i.e. the entire protocol). 
-- Pause the entire protocol in case of attacks or emergent vulnerabilities. 
+- _Pause_ the entire protocol in case of attacks or emergent vulnerabilities. 
 
 ## 3. Timelock to effective setting
 To prevent acidental and sudden change in the protocol, we apply timelock regarding setting change until effectiveness, except protocol pausing.  
