@@ -16,13 +16,9 @@ Optionally, the second oracle can be enabled and added by the _OracleSetter_. Th
 We define four admind (setter) roles associated with certain param settings: oracle price setter (_OracleSetter_), Tuning Setter (_TuningSetter_), Business Setter (BizSetter) and protocol suppervisor (_Pauser_). The 3 roles are independent. After deployment, the deployer must transfer the following roles to appropriated new admin addresses. 
 
 **OracleSetter**:
-- setDecimalShift
-- setPricefeed1
-- setQTI1
-- setPricefeed2
-- setQTI2
-- setPriceVariance
-- change adapter address
+- _SetPriceOracle_: set adapter contract address
+- _SetOracleof_: set price feedID
+- _SetMinPriceAge_: set the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period)
 
 **TuningSetter**:
 - setFee: set transaction fee
@@ -37,9 +33,8 @@ We define four admind (setter) roles associated with certain param settings: ora
 
 ## 3. Timelock to effective setting
 To prevent acidental and sudden change in the protocol, we apply timelock regarding setting change until effectiveness, except protocol pausing.  
-- All role changes require a timelock = 24h to be effective.
-- Change the adapter address requires a timelock = 24h to be effective.
-- All settings (on oracle price adapter, setFee, setKappa, setFeeto, setProtocolfee) require timelock of 1 hours to be effective.
+- All admin role changes require a timelock = 24h to be effective.
+- All settings (on OracleSetter, on TuningSetter, on BizSetter) require a timelock of 8 hours to be effective.
 - Only "_Pause the entire protocol_" is **immediately effective**. 
 
 ![image](https://github.com/user-attachments/assets/e5fe665c-316c-453a-967d-b98dd9e655a7)
