@@ -39,5 +39,12 @@ To prevent acidental and sudden change in the protocol, we apply timelock regard
 
 ![image](https://github.com/user-attachments/assets/e5fe665c-316c-453a-967d-b98dd9e655a7)
 
+## Notes for unitests
+- Test changes of 4 admin roles in 5-minute timelock
+- Test role separation: 1 role 1 separate admin address which MUST-NOT overlap each other. That means BizSetter admin cannot set the params _setFee_ and _setKappa_ of TuningSetter role.
+- Test the immediate pause
+- Test other settings in 3-minute timelock
+- Test overlapping per setting before effectiveness: for example, submit 1st TX to change Kappa, while waiting to be effective, another TX is submitted to change Kappa. The protocol should care the latest TX.  
+
 
 
