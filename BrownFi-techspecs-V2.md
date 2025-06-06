@@ -14,7 +14,7 @@ BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit rep
 | Protocol fee         | NO (not implemented fee split yet)   | YES (implemented fee split) |
 | Order size           | no limit            | $\leq 80$% reserve limited by pair contract  | 
 | Oracle adapter        | single source       | 2 sources (1 MUST, 1 optional)  |
-| Admin role           | one for all         | separate 4 roles     |
+| Admin role           | one for all         | separate 3 roles     |
 
 Read the design of oracle price adapter and admin roles [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
 
