@@ -19,8 +19,9 @@ However, we want this feature to be ON/OFF, with default OFF.
 
 Consider the pool reserve $(x, y)$ with oracle price $P^o_X, P^o_Y$, compute the absolute skewness of the pool $S=\frac{\|xP^o_X-yP^o_y\|}{xP^o_X + yP^o_y}$.  
 - If $Xreserve \geq Yreserve$, then we compute new price with skewness $P_X=P^o_X(1-\lambda* S)$ and $P_Y=P^o_Y(1+\lambda*S)$;
-- If $Xreserve \leq Yreserve$, then we compute new price with skewness $P_X=P^o_X(1+\lambda* S)$ and $P_Y=P^o_Y(1-\lambda*S)$.  
-Here, per pool, we introduce a new configurable param $lambda$ defined by max imbalance target (80-20) with default $lambda=0.02$. Lambda is limited within $[0.001, 1]$.
+- If $Xreserve \leq Yreserve$, then we compute new price with skewness $P_X=P^o_X(1+\lambda* S)$ and $P_Y=P^o_Y(1-\lambda*S)$.
+
+Here, per pool, we introduce a new configurable param $lambda (\lambda)$ defined by max imbalance target (80-20) with default $\lambda=0.02$. Lambda is limited within $[0.001, 1]$.
  
 ## 2. Admin roles
 We define three admind (setter) roles associated with certain param settings: oracle price setter (_OracleSetter_), Business Setter (BizSetter) and protocol suppervisor (_Pauser_). The 3 roles are independent. After deployment, the deployer must transfer the following roles to appropriated new admin addresses. 
