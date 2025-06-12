@@ -2,7 +2,6 @@
 To ensure highest security level for BrownFi AMM, we design an oracle price adapter to fetch price for all pools, and separate admin (setter) roles regarding various settings in the BrownFi protocol. Read the related BrownFi V2 tech-specifications [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/BrownFi-techspecs-V2.md).
 
 ## 1. Oracle price adapter
-### 1.1. Multi-sources
 BrownFi V2 introduces a new design for oracle price adapter: 2 price sources. The adapter address can be changed to a new contract address. 
 
 The adapter pulls or receives token prices from oracles, then feeds to pair contracts (liquidity pools) for swaps and/or adding LP. By default, at least one oracle price source **MUST** be set.   
@@ -12,16 +11,6 @@ Optionally, the second oracle (_implement later_) can be enabled and added by th
 - Verify that two sources have the same decimals.
 - Verify that variance of the two price sources doesn't exceed 0.5%, i.e. $variance = \frac{\|oraclePrice1 - oraclePrice2\|}{oraclePrice1 + oraclePrice2} \leq 1/200=0.005$. Otherwise, invalid price => revert TX. 
 - Compute the mean (average) price $meanPrice = (oraclePrice1 + oraclePrice2)/2$.
-
-### 1.2. Adding pool skewness to price
-In V2, BrownFi introduces pool skewness (share imbalance) to oracle price before swap. This is to incentivize trades toward balancing between the two token reserves, otherwise discourage.   
-However, we want this feature to be ON/OFF, with default OFF. 
-
-Consider the pool reserve $(x, y)$ with oracle price $P^o_X, P^o_Y$, compute the absolute skewness of the pool $S=\frac{\|xP^o_X-yP^o_y\|}{xP^o_X + yP^o_y}$.  
-- If $Xreserve \geq Yreserve$, then we compute new price with skewness $P_X=P^o_X(1-\lambda* S)$ and $P_Y=P^o_Y(1+\lambda*S)$;
-- If $Xreserve \leq Yreserve$, then we compute new price with skewness $P_X=P^o_X(1+\lambda* S)$ and $P_Y=P^o_Y(1-\lambda*S)$.
-
-Here, per pool, we introduce a new configurable param $lambda (\lambda)$ defined by max imbalance target (80-20) with default $\lambda=0.02$. Lambda is limited within $[0.001, 1]$.
  
 ## 2. Admin roles
 We define three admind (setter) roles associated with certain param settings: oracle price setter (_OracleSetter_), Business Setter (BizSetter) and protocol suppervisor (_Pauser_). The 3 roles are independent. After deployment, the deployer must transfer the following roles to appropriated new admin addresses. 
@@ -30,12 +19,11 @@ We define three admind (setter) roles associated with certain param settings: or
 - _SetPriceOracle_: set adapter contract address
 - _SetOracleof_: set price feedID
 - _SetMinPriceAge_: set the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period)
-- _Enable/Disable_ skewness: Enable to add skewness to oracle price update, or disable to bypass skewness (i.e. pure oracle price only) 
-- _SetLambda_: set Lambda param to compute  price with skewness
 
 **BizSetter** acts on a specific pool. Two pools may have two separated Bussiness Setters who are responsible for the 4 following settings: 
 - _setFee_: set transaction fee
 - _setKappa_: set parameter which controls liquidity concentration
+- _setLambda_: set Lambda param to compute  price with skewness
 - _setFeeto_: set receiver of protocol fee (receiving diluted LP tokens per swap) which belongs to the developer
 - _setProtocolfee_: set the share percentage of trading fee which will belong to the developer
 
