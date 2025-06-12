@@ -30,6 +30,8 @@ We define three admind (setter) roles associated with certain param settings: or
 - _SetPriceOracle_: set adapter contract address
 - _SetOracleof_: set price feedID
 - _SetMinPriceAge_: set the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period)
+- _Enable/Disable_ skewness: Enable to add skewness to oracle price update, or disable to bypass skewness (i.e. pure oracle price only) 
+- _SetLambda_: set Lambda param to compute  price with skewness
 
 **BizSetter** acts on a specific pool. Two pools may have two separated Bussiness Setters who are responsible for the 4 following settings: 
 - _setFee_: set transaction fee
