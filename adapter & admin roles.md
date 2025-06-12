@@ -48,8 +48,6 @@ To prevent acidental and sudden change in the protocol, we apply timelock regard
 - All settings on OracleSetter require a timelock of 8 hours to be effective. In the mean time of waiting for the end of timelock, the protocol is still active with the old settings.  
 - The settings "_Pause the entire protocol_" and on Bizsetter (_setFee_, _setKappa_, _setFeeto_, _setProtocolfee_) are **immediately effective**. 
 
-![image](https://github.com/user-attachments/assets/f9ee760a-44cc-4d84-91d4-2da0f70eabec)
-
 ![image](https://github.com/user-attachments/assets/e61a5b86-fedf-4965-ac8e-8caa5cc2e2da)
 ## Notes for unitests
 - Test changes of 3 admin roles in 5-minute timelock
