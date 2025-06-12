@@ -34,7 +34,7 @@ Consider the pool reserve $(x, y)$ with oracle price $P^o_X, P^o_Y$, compute the
 - If $Xreserve \geq Yreserve$ means $xP^o_X \geq yP^o_y$, then we compute new price with skewness $P_X=P^o_X(1-\lambda* S)$ and $P_Y=P^o_Y(1+\lambda*S)$;
 - If $Xreserve \leq Yreserve$ means $xP^o_X \leq yP^o_y$, then we compute new price with skewness $P_X=P^o_X(1+\lambda* S)$ and $P_Y=P^o_Y(1-\lambda*S)$.
 
-Here, per pool, we introduce a new configurable param $lambda (\lambda)$ defined by max imbalance target (80-20) with default $\lambda=0$ and limit range $[0, 1]$. The following diagram indicates where we need skewness (for swap) or NOT (for add LP).  
+Here, per pool, we introduce a new configurable param lambda $(\lambda)$ defined by max imbalance target (80-20) with default $\lambda=0$ and limit range $[0, 1]$. The following diagram indicates where we need skewness (for swap) or NOT (for add LP).  
 ![image](https://github.com/user-attachments/assets/e61a5b86-fedf-4965-ac8e-8caa5cc2e2da)
 
 # 3. Liquidity provision
