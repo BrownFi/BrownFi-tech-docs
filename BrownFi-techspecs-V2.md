@@ -35,7 +35,6 @@ Create a new liquidity pool is permissionless similarly to the design of Uniswap
 - Set oracle price feed of the token pair.
 - Set liquidity concentration, Kappa parameter, requiring limits $0.0001 \leq K \leq 2$.
   
-See an example on BrawnFi AMM deployed on Metis mainnet https://andromeda-explorer.metis.io/address/0x36D65d716093344B05c961D65b286fa13dde6f5B?tab=write_contract
 
 ## 2.2. Add liquidity
 
@@ -48,10 +47,10 @@ causing higher price impact on the less side and smaller price impact on the lar
 We want to  extend the framework to reduce the cons, improving LP UX. This can be done by converting assets to **USD value** (or a pre-defined quote asset), then computing LP share. Price-feed is required to compute dollar value of the pool and new adding LP.  
 
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
--  Assume that at a specific time $t$, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$ fed by oracle adapter without sknewness factor, and the pool value $V= x * P_X + y * P_Y$.
--  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P_X + y' * P_Y$. His liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or **$newLP=E\times \frac{B}{V}$.** 
+-  Assume that at a specific time $t$, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$ fed by oracle adapter **_without sknewness_** factor, and the pool value $V= x * P^o_X + y * P^o_Y$.
+-  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P^o_X + y' * P^o_Y$. His liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or **$newLP=E\times \frac{B}{V}$.** 
 ### Trick at LP initiation
-When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar price $P_X, P_Y$, and the initiating value $B= x * P_X + y * P_Y$. Then we do:
+When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar price $P^o_X, P^o_Y$, and the initiating value $B= x * P^o_X + y * P^o_Y$. Then we do:
 - mint the minimum amount of LP $E_0=1000$ and send to DEAD address (i.e. burn to 0x0...00);
 - mint the initiating amount of LP token $E_1=B$ for the pool creator, i.e. setting $E_0/V_0=1$. 
 
@@ -59,7 +58,7 @@ When someone initiates a pool, we must pass the ZERO state. Assume the we initia
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
 -  Assume that at a specific time, the pool has token reserve $(x, y)$ with corresponding dollar price $P_X, P_Y$, and the pool value $V= x * P_X + y * P_Y$.
 -  Bob wanna remove LP share by burning an amount of $s$ LP tokens to receive $(x', y')$ token X and token Y, repectively. We must ensure the equality by USD-value $\frac{s}{E}=\frac{B}{V}$ where $B = x' * P_X + y' * P_Y$. This equation may have infinite number of solutions. Thus, additionally, we require a proportional withdrawal on both sides of the pool reserve, i.e. $\frac{x'}{x}=\frac{y'}{y}$. 
--  The solution presenting amounts of LP withdrawal is $x' = \frac{s}{E}x, y' = \frac{s}{E}y$, satisfying all our requirements.
+-  The solution presenting amounts of LP withdrawal is $x' = \frac{s}{E}x, y' = \frac{s}{E}y$, satisfying all our requirements (no need price update here).
 
 # 3. Pool state verification
 
@@ -67,7 +66,7 @@ Per swap, the pool must be guaranteed that post-trade inventory (**without fee**
 
 **NOTE**: Trading fee is applied on amountIN only. We have _actual amountIN = pseudo amountIN * (1 + fee); pseudo amountIN = actual amountIN / (1 + fee)_.
 
-Assume that the pair of token X, token Y has oracle price $P_X=P_{X/USD}, P_Y=P_{Y/USD}$ both quoted by US dollar.  
+Assume that the pair of token X, token Y has **price with skewness** $P_X=P_{X/USD}, P_Y=P_{Y/USD}$ both quoted by US dollar and fed by oracle adapter.  
 
 
 ## 3.1. BUY verification
@@ -91,7 +90,7 @@ Without caring on buy/sell, we can re-state the inventory verification formula i
 $$(Reserve_{OUT} - amount_{OUT})*Price_{OUT} + (Reserve_{IN} + amount_{IN})*Price_{IN} - Price_{OUT} * \frac{K * (amount_{OUT})^2}{2(Reserve_{OUT} - amount_{OUT})} \geq Reserve_{OUT} * Price_{OUT} + Reserve_{IN} * Price_{IN}$$
 
 # 4. Swap formulas
-BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1, except trading fee is **applied** for **amountOUT** (instead of _amountIN_ in V1).
+BrownFi router computes amountIN and amountOUT for swap as mostly similar as V1, except trading fee is **applied** for **amountOUT** (instead of _amountIN_ in V1). The price is fed by oracle adapter with **skewness** factor, not pure oracle price. 
 
 ## 4.1. Backward computation (get amountin) 
 > there are two cases of a trade:   
@@ -145,10 +144,11 @@ Traders enter **actual** _amountIN_ $Dx$ of token X => find _amountOUT_ $Dy$ of 
 3. Return to Steps (1 to 6) of Section 4.1.2 in Backward computation.
 
 
-## 4.3. Computing flow diagram
+## 4.3. Flow diagram
 
-This flow is REGULAR on BrownFi AMM by math, and suggested. 
-![image](https://github.com/user-attachments/assets/0e211da3-2541-4696-8858-0279988c1932)
+This flow is REGULAR on BrownFi AMM by math  
+![image](https://github.com/user-attachments/assets/e61a5b86-fedf-4965-ac8e-8caa5cc2e2da)
+
 
 # 5. Protocol fee (splitted for the developer)
 
@@ -162,10 +162,11 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Ho
 
 **Computating protocol fee**
 
+-  The price is pure oracle price **withOUT** skewness.
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
 -  Assume that the swap is given by an actual amountIN whose pseudo amountIN (without trading fee) is $pseudoAmountIN = \frac{actualAmountIN}{1+fee}$. Thus, the trading fee amount is $actualAmountIN - \frac{actualAmountIN}{1+fee} = \frac{actualAmountIN}{1+fee}* fee$.
-- Given the oracle price of token-IN is $P_{tokenIN}$, we compute $protocolFee = \frac{actualAmountIN}{1+fee}* fee * m * P_{tokenIN}$ in dollar value. Where $0\leq m \leq 1$ is a configurable param with default $m=0.1$ (i.e. 10% of LP revenue).
-- Mint an amount of new LP token by $newLP=E * \frac{protocolFee}{PoolValue_{posttrade}} = E * \frac{protocolFee}{x_1P_X + y_1P_Y}$ then transfer to the dev wallet (_FeeTo_ setting). This should be compatible with  [adding new LP issue](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597) and equivalently to [LP computation](https://github.com/BrownFi/BrownAMM-dev/blob/main/compute-LP.md). 
+- Given the oracle price of token-IN is $P_{tokenIN}$, we compute $protocolFee = \frac{actualAmountIN}{1+fee}* fee * m * P^o_{tokenIN}$ in dollar value. Where $0\leq m \leq 1$ is a configurable param with default $m=0.1$ (i.e. 10% of LP revenue).
+- Mint an amount of new LP token by $newLP=E * \frac{protocolFee}{PoolValue_{posttrade}} = E * \frac{protocolFee}{x_1P^o_X + y_1P^o_Y}$ then transfer to the dev wallet (_FeeTo_ setting). This should be compatible with  [adding new LP issue](https://github.com/orgs/BrownFi/projects/1/views/1?pane=issue&itemId=81293597) and equivalently to [LP computation](https://github.com/BrownFi/BrownAMM-dev/blob/main/compute-LP.md). 
 
 > The price to compute the dev LP is the same as the fetched price for the swap.   
 
