@@ -1,4 +1,4 @@
-# BrownFi V2: design for the price adapter & admin roles
+# BrownFi V2: design for the price oracle adapter & admin roles
 To ensure highest security level for BrownFi AMM, we design an oracle price adapter to fetch price for all pools, and separate admin (setter) roles regarding various settings in the BrownFi protocol. Read the related BrownFi V2 tech-specifications [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/BrownFi-techspecs-V2.md).
 
 ## 1. Oracle price adapter
