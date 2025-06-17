@@ -184,7 +184,7 @@ The following settings are applied for all BrownFi AMM's pools by default but ca
 
 After deploying the protocol, the deployer MUST transfer the admin roles to the predefined wallets / public addresses.  
 
-Pool creation is permissionless with the risk of fake or malicious oracle feed. This can be done by checking the pair and oracle IDs on frontends or routers, and some additional safeguards are designed [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  
+Pool creation is permissionless with the risk of fake or malicious oracle feed. This can be done by checking the whitelisted pairs and oracle IDs on frontends or routers, then giving users cautions [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  
 
 # Testcases
 2 sheets with skewness https://docs.google.com/spreadsheets/d/1Smc8OTL4EaiyXJ6chdxViT3GJI5w3Fpz/edit?usp=sharing&ouid=101802233739943862069&rtpof=true&sd=true
