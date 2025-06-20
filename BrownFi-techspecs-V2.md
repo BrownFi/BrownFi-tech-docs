@@ -62,8 +62,9 @@ We want to  extend the framework to reduce the cons, improving LP UX. This can b
   
 ### Trick at LP initiation
 When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar oracle-price $P^o_X, P^o_Y$, and the initiating value $B= x * P^o_X + y * P^o_Y$. Then we do:
-- mint the minimum amount of LP $E_0=1000$ and send to DEAD address (i.e. burn to 0x0...00);
-- mint the initiating amount of LP token $E_1=B$ for the pool creator, i.e. setting $E_0/V_0=1$. 
+
+- mint the minimum amount of LP tokens = 1000 and send to DEAD address (i.e. burn to 0x0...00);
+- mint the initiating amount of LP token $E_0-1000=B-1000$ for the pool creator, i.e. setting $E_0/V_0=1$.
 
 ## 3.3. Remove LP 
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
