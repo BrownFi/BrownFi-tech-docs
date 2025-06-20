@@ -57,7 +57,8 @@ We want to  extend the framework to reduce the cons, improving LP UX. This can b
 
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
 -  Assume that at a specific time $t$, the pool has token reserve $(x, y)$ with corresponding dollar price $P^o_X, P^o_Y$ fed by oracle adapter **_without sknewness_** factor, and the pool value $V= x * P^o_X + y * P^o_Y$.
--  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P^o_X + y' * P^o_Y$. His liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or **$newLP=E\times \frac{B}{V}$.**
+-  Bob wanna add LP amount of $(x', y')$ with USD-value $B = x' * P^o_X + y' * P^o_Y$, required $x' * P^o_X = y' * P^o_Y$, i.e. 50-50 liquidity provision, equivalently $B = 2 * \min(x' * P^o_X, y' * P^o_Y)$.
+-  Bob's liquidity share is $s=\frac{B}{V+B}$ and we mint an amount of new LP token by $\frac{newLP}{E+newLP}=\frac{B}{V+B}=s$, hence $newLP=\frac{sE}{1-s}$. We must have $\frac{newLP}{E}=\frac{B}{V}$ or **$newLP=E\times \frac{B}{V}$.**
   
 ### Trick at LP initiation
 When someone initiates a pool, we must pass the ZERO state. Assume the we initiate $x>0$ token X and $y>0$ token Y to create a new trading pair (i.e. a new liquidity pool), with corresponding dollar oracle-price $P^o_X, P^o_Y$, and the initiating value $B= x * P^o_X + y * P^o_Y$. Then we do:
