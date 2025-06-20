@@ -177,16 +177,35 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Ho
 > The price to compute the dev LP is **skewness price** in Section 2.   
 
 
-# 6. Protocol settings/configurations
-The following settings are applied for all BrownFi AMM's pools by default but can be changed by the protocol admins.  Read the admin roles and their corresponding rights [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
+# 6. Admin roles and protocol settings
+## 6.1. Parameter settings
+The following parameters are applied for all BrownFi AMM's pools and can be re-configurated by the protocol admins.  Read the admin roles and their corresponding rights [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
 
-- **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.0001 \leq K \leq 2$. The defaut is set to be $K=0.01$, thus liquidity concentration (or liquid depth) is similar to Uniswap V3 range $\pm2$%.  
+- **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.0001 \leq K \leq 2$. The defaut is set to be $K=0.01$, thus liquidity concentration (or liquid depth) is similar to Uniswap V3 range $\pm2$%.
+- **Lambda**: set Lambda param to compute  price with skewness
 - **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 0.1$, i.e. cap by 10%. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
 - **Protocol fee** $m$ (default $m=0.1$) is a configurable param, where $0\leq m \leq 1$. Protocol fee receipient is set by _feeTo_ function on Factory contract.
+- **MinPriceAge**: the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period).
 
-After deploying the protocol, the deployer MUST transfer the admin roles to the predefined wallets / public addresses.  
+## 6.2. Three admin roles
 
-Pool creation is permissionless with the risk of fake or malicious oracle feed. This can be done by checking the whitelisted pairs and oracle IDs on frontends or routers, then giving users cautions [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  
+**OracleSetter** acts on a specific pool. Two pools may have two separated Oracle Setters who are responsible for the 3 following settings: 
+- _SetPriceOracle_: set adapter contract address
+- _SetOracleof_: set price feedID
+- _SetMinPriceAge_: set the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period)
+
+**BizSetter** acts on a specific pool. Two pools may have two separated Bussiness Setters who are responsible for the 4 following settings: 
+- _setFee_: set transaction fee
+- _setKappa_: set parameter which controls liquidity concentration
+- _setLambda_: set Lambda param to compute  price with skewness
+- _setFeeto_: set receiver of protocol fee (receiving diluted LP tokens per swap) which belongs to the developer
+- _setProtocolfee_: set the share percentage of trading fee which will belong to the developer
+
+**Pauser** acts on all pools (i.e. the entire protocol). 
+- _Pause_ the entire protocol in case of attacks or emergent vulnerabilities. 
+
+**NOTE** that all 3 roles above are asigned by the factory admin after protocol deployment. 
+After deploying the protocol, the deployer MUST transfer the admin roles to a multisig wallets. Read details about [admin roles HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  
 
 # Testcases
 2 sheets with skewness https://docs.google.com/spreadsheets/d/1Smc8OTL4EaiyXJ6chdxViT3GJI5w3Fpz/edit?usp=sharing&ouid=101802233739943862069&rtpof=true&sd=true
