@@ -13,7 +13,7 @@ Optionally, the second oracle (_implement later_) can be enabled and added by th
 - Compute the mean (average) price $meanPrice = (oraclePrice1 + oraclePrice2)/2$.
  
 ## 2. Admin roles
-We define three admind (setter) roles associated with certain param settings: oracle price setter (_OracleSetter_), Business Setter (BizSetter) and protocol suppervisor (_Pauser_). The 3 roles are independent. After deployment, the deployer must transfer the following roles to appropriated new admin addresses. 
+We define three admin (setter) roles associated with certain param settings: oracle price setter (_OracleSetter_), Business Setter (BizSetter) and protocol suppervisor (_Pauser_). The 3 roles are independent. After deployment, the deployer must transfer the following roles to appropriated new admin addresses. 
 
 **OracleSetter** acts on a specific pool. Two pools may have two separated Oracle Setters who are responsible for the 3 following settings: 
 - _SetPriceOracle_: set adapter contract address
@@ -29,6 +29,8 @@ We define three admind (setter) roles associated with certain param settings: or
 
 **Pauser** acts on all pools (i.e. the entire protocol). 
 - _Pause_ the entire protocol in case of attacks or emergent vulnerabilities. 
+
+**NOTE** that all 3 roles above are asigned by the factory admin after protocol deployment. 
 
 ## 3. Timelock to effective setting
 To prevent acidental and sudden change in the protocol, we apply timelock regarding setting change until effectiveness, except protocol pausing.  
