@@ -183,7 +183,7 @@ BrownFi is an oracle-based AMM, thus, it needs regular parameter configurations 
 ## 6.1. Parameter settings
 The following parameters are applied for all BrownFi AMM's pools and can be re-configurated by the protocol admins.
 - **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.0001 \leq K \leq 2$. The defaut is set to be $K=0.01$, thus liquidity concentration (or liquid depth) is similar to Uniswap V3 range $\pm2$%.
-- **Lambda**: set Lambda param to compute  price with skewness
+- **Lambda** param is to control the impact of  price with skewness, limited in range $[0,1]$.
 - **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 0.1$, i.e. cap by 10%. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
 - **Protocol fee** $m$ (default $m=0.1$) is a configurable param, where $0\leq m \leq 1$. Protocol fee receipient is set by _feeTo_ function on Factory contract.
 - **MinPriceAge**: the minimal valid time for an updated price (i.e. invalid price if exceeding the minimal time-period).
