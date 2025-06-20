@@ -1,5 +1,5 @@
 _This is a technical document, describing all technical specilizations of BrownFi AMM version 2. The contents are math concept, protocol design, create new pools, add/remove liquidity, swap formulas, fee & other protocol settings_  
-BrownFi V1 (current **Beta Production**) is audited by Verichain, see [audit report](https://github.com/verichains/public-audit-reports/blob/main/Verichains%20Public%20Audit%20Report%20-%20BrownFi%20AMM%20Smartcontracts%20-%20v1.0.pdf)
+[BrownFi V1](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/BrownFi-techspecs-V1.md) (current **Beta Production**) is audited by Verichain, see [audit report](https://github.com/verichains/public-audit-reports/blob/main/Verichains%20Public%20Audit%20Report%20-%20BrownFi%20AMM%20Smartcontracts%20-%20v1.0.pdf)
 
 **We compare the two versions.** While using the same Codebase of [Uniswap V2](https://github.com/Uniswap/v2-core) and its design, the two versions of BrownFi AMM protocol have some diffentiations.         
 
