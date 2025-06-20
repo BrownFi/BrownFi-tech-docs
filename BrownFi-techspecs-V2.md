@@ -178,9 +178,10 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Ho
 
 
 # 6. Admin roles and protocol settings
-## 6.1. Parameter settings
-The following parameters are applied for all BrownFi AMM's pools and can be re-configurated by the protocol admins.  Read the admin roles and their corresponding rights [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
+BrownFi is an oracle-based AMM, thus, it needs regular parameter configurations by the protocol admins. We define admin roles and their associated settings [(details HERE)](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). Nevertheless, NO admin role can withdraw liquidity, keeping the principle of noncustodial AMM. 
 
+## 6.1. Parameter settings
+The following parameters are applied for all BrownFi AMM's pools and can be re-configurated by the protocol admins.
 - **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.0001 \leq K \leq 2$. The defaut is set to be $K=0.01$, thus liquidity concentration (or liquid depth) is similar to Uniswap V3 range $\pm2$%.
 - **Lambda**: set Lambda param to compute  price with skewness
 - **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 0.1$, i.e. cap by 10%. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
@@ -205,7 +206,7 @@ The following parameters are applied for all BrownFi AMM's pools and can be re-c
 - _Pause_ the entire protocol in case of attacks or emergent vulnerabilities. 
 
 **NOTE** that all 3 roles above are asigned by the factory admin after protocol deployment. 
-After deploying the protocol, the deployer MUST transfer the admin roles to a multisig wallets. Read details about [admin roles HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  
+After deploying the protocol, the deployer MUST transfer the admin roles to a multisig wallets [(details of admin roles HERE)](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  Nevertheless, NO admin role can withdraw liquidity, keeping the principle of noncustodial AMM. 
 
 # Testcases
 2 sheets with skewness https://docs.google.com/spreadsheets/d/1Smc8OTL4EaiyXJ6chdxViT3GJI5w3Fpz/edit?usp=sharing&ouid=101802233739943862069&rtpof=true&sd=true
