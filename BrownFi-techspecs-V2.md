@@ -206,7 +206,7 @@ The following parameters are applied for all BrownFi AMM's pools and can be re-c
 - _Pause_ the entire protocol in case of attacks or emergent vulnerabilities. 
 
 **NOTE** that all 3 roles above are asigned by the factory admin after protocol deployment. 
-After deploying the protocol, the deployer MUST transfer the admin roles to a multisig wallets [(details of admin roles HERE)](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  Nevertheless, NO admin role can withdraw liquidity, keeping the principle of noncustodial AMM. 
+After deploying the protocol, the deployer MUST transfer the admin roles to multisig wallets [(details of admin roles HERE)](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md).  Nevertheless, NO admin role can withdraw liquidity, keeping the principle of noncustodial AMM. 
 
 # Testcases
 2 sheets with skewness https://docs.google.com/spreadsheets/d/1Smc8OTL4EaiyXJ6chdxViT3GJI5w3Fpz/edit?usp=sharing&ouid=101802233739943862069&rtpof=true&sd=true
