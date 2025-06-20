@@ -31,8 +31,8 @@ The Kappa ($K$) is limited by the range $0.0001 \leq K \leq 2$. Smaller Kappa, g
 Basically, all pool of BrownFi AMM need oracle price, fed by the [oracle adapter](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). In V2, BrownFi introduces pool skewness (share imbalance) adding to oracle price before swap. This is to incentivize trades toward balancing between the two token reserves, otherwise discourage. 
 
 Consider the pool reserve $(x, y)$ with oracle price $P^o_X, P^o_Y$, compute the absolute skewness of the pool $S=\frac{\|xP^o_X-yP^o_y\|}{xP^o_X + yP^o_y}$.  
-- If $Xreserve \geq Yreserve$ means $xP^o_X \geq yP^o_y$, then we compute new price with skewness $P_X=P^o_X(1-\lambda* S)$ and $P_Y=P^o_Y(1+\lambda*S)$;
-- If $Xreserve \leq Yreserve$ means $xP^o_X \leq yP^o_y$, then we compute new price with skewness $P_X=P^o_X(1+\lambda* S)$ and $P_Y=P^o_Y(1-\lambda*S)$.
+- If $xP^o_X \geq yP^o_y$, then we compute new price with skewness $P_X=P^o_X(1-\lambda* S)$ and $P_Y=P^o_Y(1+\lambda*S)$;
+- If $xP^o_X \leq yP^o_y$, then we compute new price with skewness $P_X=P^o_X(1+\lambda* S)$ and $P_Y=P^o_Y(1-\lambda*S)$.
 
 Here, per pool, we introduce a new configurable param lambda $(\lambda)$ defined by max imbalance target (80-20) with default $\lambda=0$ and limit range $[0, 1]$. The following diagram indicates where we need skewness (for swap) or NOT (for add LP).  
 ![image](https://github.com/user-attachments/assets/e61a5b86-fedf-4965-ac8e-8caa5cc2e2da)
@@ -181,7 +181,7 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Ho
 The following settings are applied for all BrownFi AMM's pools by default but can be changed by the protocol admins.  Read the admin roles and their corresponding rights [HERE](https://github.com/BrownFi/BrownFi-tech-docs/blob/main/adapter%20&%20admin%20roles.md). 
 
 - **Kappa** (the parameter controlling liquidity concentration) is limited in the range $0.0001 \leq K \leq 2$. The defaut is set to be $K=0.01$, thus liquidity concentration (or liquid depth) is similar to Uniswap V3 range $\pm2$%.  
-- **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 1$. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
+- **Trading fee** is applied for _amountIN only_, and $fee = 0.003$, i.e. 0.3%. The limited range is $0 \leq fee \leq 0.1$, i.e. cap by 10%. Trading fee is implemented at the core contract, i.e. pair contract when verifying inventory using amountIN and amountIN_withoutfee.
 - **Protocol fee** $m$ (default $m=0.1$) is a configurable param, where $0\leq m \leq 1$. Protocol fee receipient is set by _feeTo_ function on Factory contract.
 
 After deploying the protocol, the deployer MUST transfer the admin roles to the predefined wallets / public addresses.  
