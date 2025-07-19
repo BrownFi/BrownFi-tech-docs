@@ -19,6 +19,10 @@
     "chain-80094": {
       "name": "Berachain bArtio",
       "address": "0x3F0bBeEdEa5E5F63a14cBdA82718d4f25501fBeA"
+    },
+    "chain-999": {
+      "name": "Hyperevm",
+      "address": "0x3240853b71c89209ea8764CDDfA3b81766553E55"
     }
   },
   "summary": {
@@ -28,7 +32,8 @@
       "Arbitrum One (42161)",
       "Base (8453)",
       "BNB Smart Chain (56)",
-      "Berachain bArtio (80094)"
+      "Berachain bArtio (80094)",
+      "Hyperevm (999)"
     ]
   }
 }
