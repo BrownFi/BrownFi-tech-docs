@@ -1,9 +1,5 @@
 {
   "BrownFiV2Router_Deployments": {
-    "chain-421614": {
-      "name": "Arbitrum Sepolia Testnet",
-      "address": "0xbfe20401749C65a6245A8f62b682626399e115E2"
-    },
     "chain-42161": {
       "name": "Arbitrum One",
       "address": "0x3240853b71c89209ea8764CDDfA3b81766553E55"
@@ -22,13 +18,34 @@
     },
     "chain-999": {
       "name": "Hyperevm",
-      "address": "0x3240853b71c89209ea8764CDDfA3b81766553E55"
+      "address": "0x0A461D280891167Ee8391f4F0c03EECaa39ae632"
     }
   },
+  "BrownFiV2Factory_Deployments": {
+      "chain-42161": {
+        "name": "Arbitrum One",
+        "address": "0xD05395a6b6542020FBD38D31fe1377130b35592E"
+      },
+      "chain-8453": {
+        "name": "Base",
+        "address": "0x43AB776770cC5c739adDf318Af712DD40918C42d"
+      },
+      "chain-56": {
+        "name": "BNB Smart Chain",
+        "address": "0x43AB776770cC5c739adDf318Af712DD40918C42d"
+      },
+      "chain-80094": {
+        "name": "Berachain bArtio",
+        "address": "0x43AB776770cC5c739adDf318Af712DD40918C42d"
+      },
+      "chain-999": {
+        "name": "Hyperevm",
+        "address": "0x3240853b71c89209ea8764CDDfA3b81766553E55"
+      }
+  },
   "summary": {
-    "total_deployments": 6,
+    "total_deployments": 5,
     "chains": [
-      "Arbitrum Sepolia Testnet (421614)",
       "Arbitrum One (42161)",
       "Base (8453)",
       "BNB Smart Chain (56)",
