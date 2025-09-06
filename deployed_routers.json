@@ -23,6 +23,10 @@
     "chain-59144": {
       "name": "Linea",
       "address": "0x3F0bBeEdEa5E5F63a14cBdA82718d4f25501fBeA"
+    },
+    "chain-1329": {
+      "name": "Sei",
+      "address": "0x3F0bBeEdEa5E5F63a14cBdA82718d4f25501fBeA"
     }
   },
   "BrownFiV2Factory_Deployments": {
@@ -49,17 +53,22 @@
       "chain-59144": {
         "name": "Linea",
         "address": "0x43AB776770cC5c739adDf318Af712DD40918C42d"
+      },
+      "chain-1329": {
+        "name": "Sei",
+        "address": "0x43AB776770cC5c739adDf318Af712DD40918C42d"
       }
   },
   "summary": {
-    "total_deployments": 6,
+    "total_deployments": 7,
     "chains": [
       "Arbitrum One (42161)",
       "Base (8453)",
       "BNB Smart Chain (56)",
       "Berachain bArtio (80094)",
       "Hyperevm (999)",
-      "Linea (59144)"
+      "Linea (59144)",
+      "Sei (1329)"
     ]
   }
 }
