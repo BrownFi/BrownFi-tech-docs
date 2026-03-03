@@ -166,7 +166,7 @@ Per swap, LPers earn premium fee (derived from price impact) and trading fee. Ho
 
 **Solution**: mint LP token for dev per swap according to the dollar-amount of protocol fee. 
 
-**Computating protocol fee**
+**Computing protocol fee**
 
 -  The price is pure oracle price **withOUT** skewness.
 -  Assume that the total supplying LP tokens are $E=totalLPtokens, E>0$.
