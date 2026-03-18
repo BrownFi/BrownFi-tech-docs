@@ -2,7 +2,7 @@
   "BrownFiV2Router_Deployments": {
     "chain-42161": {
       "name": "Arbitrum One",
-      "address": "0x3240853b71c89209ea8764CDDfA3b81766553E55"
+      "address": "0x68F963E0CEC0360a003AB8c6D61FA3f39497c463"
     },
     "chain-8453": {
       "name": "Base",
@@ -10,23 +10,23 @@
     },
     "chain-56": {
       "name": "BNB Smart Chain",
-      "address": "0xD3F729D909a7E84669A35c3F25b37b4AC3487784"
+      "address": "0xbCE4436BB4F0AdAcdAb3c9d3aEE44059cb9c371B"
     },
     "chain-80094": {
       "name": "Berachain bArtio",
-      "address": "0xa8e42eB1C8aC6228BE39522728E18e7F6d69443c"
+      "address": "0xb91458408dc7bb0561da70ffd89903794eAcDDA7"
     },
     "chain-999": {
       "name": "Hyperevm",
-      "address": "0x0A461D280891167Ee8391f4F0c03EECaa39ae632"
+      "address": "0x7D06f0ad977B3276da37f2Da4b3a7b2c639244aA"
     },
     "chain-59144": {
       "name": "Linea",
-      "address": "0x3F0bBeEdEa5E5F63a14cBdA82718d4f25501fBeA"
+      "address": "0xf435c8a8b8FFB5236eFF9a955dee41564C84Aa62"
     },
     "chain-143": {
       "name": "Monad",
-      "address": "0xD3F729D909a7E84669A35c3F25b37b4AC3487784"
+      "address": "0xFaed28e0ffb1C07A2Aa7A41Ae03536dfC12B0db7"
     },
     "chain-1329": {
       "name": "Sei",
